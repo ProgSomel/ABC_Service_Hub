@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Client } from './clients.model';
 import { ClientRegistrationDTO } from './dto/clientRegistrationDTO';
 import { v4 as uuidv4 } from 'uuid';
@@ -13,7 +13,12 @@ export class ClientsService {
   }
 
   getClientById(id: string): Client {
-    return this.clients.find((client) => client.id === id);
+    const found =  this.clients.find((client) => client.id === id);
+    if(!found) {
+      throw new NotFoundException("!Client Not Found");
+
+    }
+    return found;
   }
 
   getClientByIdAndUserName(id: string, userName: string): Client {
