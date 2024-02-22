@@ -112,7 +112,8 @@ export class ClientsService {
   }
 
   deleteClientProfile(id: string): object {
-    this.clients = this.clients.filter((client) => client.id !== id);
+    const found = this.getClientById(id);
+    this.clients = this.clients.filter((client) => client.id !== found.id);
     return {Message: "Client is deleted"}
   }
 }
