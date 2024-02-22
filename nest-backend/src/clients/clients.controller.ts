@@ -9,11 +9,16 @@ import {
   Query,
   UsePipes,
   ValidationPipe,
+  UseInterceptors,
+  UploadedFile,
+  Res,
 } from '@nestjs/common';
 import { ClientsService } from './clients.service';
 import { ClientRegistrationDTO } from './dto/clientRegistrationDTO';
 import { Client } from './clients.model';
 import { UpdateClientProfileDTO } from './dto/updateClientProfileDTO';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { MulterError, diskStorage } from 'multer';
 
 @Controller('clients')
 export class ClientsController {
@@ -46,6 +51,13 @@ export class ClientsController {
     return this.clientsService.clientLogin(email, password);
   }
 
+  //! Get File 
+  @Get('/getFile/:name')
+  getFiles(@Param('name') name, @Res() res) {
+    res.sendFile(name, {root: './uploads'});
+  }
+
+
 
   //! Client Registration 
   @Post('/clientRegistration')
@@ -55,6 +67,30 @@ export class ClientsController {
   ): Client {
     
     return this.clientsService.clientRegistration(clientRegistrationDTO);
+  }
+
+  @Post('upload')
+  @UseInterceptors(FileInterceptor ('file', {
+    fileFilter(req, file, cb) {
+        if(file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/))
+        cb(null, true);
+      else {
+        cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false)
+      }
+
+    },
+    limits: {fileSize: 30000},
+    storage: diskStorage({
+      destination: "./uploads",
+      filename: function (req, file, cb) {
+        cb(null, file.originalname);
+      }
+    })
+  }))
+
+  async uploadFile(@UploadedFile() file: Express.Multer.File) {
+    console.log(file);
+    return "SuccessFully Uploaded The File";
   }
 
   //! Update Client Profile 
