@@ -53,7 +53,7 @@ export class ClientsController {
   clientRegistration(
     @Body() clientRegistrationDTO: ClientRegistrationDTO,
   ): Client {
-    console.log('Received DTO:', clientRegistrationDTO);
+    
     return this.clientsService.clientRegistration(clientRegistrationDTO);
   }
 

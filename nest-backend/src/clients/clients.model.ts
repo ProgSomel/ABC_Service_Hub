@@ -11,4 +11,5 @@ export class Client {
   location?: string;
     createdAt: Date;
     errorMessage?: string;
+    SocialLinks? : string;
 }

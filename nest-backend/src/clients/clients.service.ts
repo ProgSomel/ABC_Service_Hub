@@ -22,6 +22,7 @@ export class ClientsService {
   }
 
   clientRegistration(clientRegistrationDTO: ClientRegistrationDTO): Client {
+    
     const {
       firstName,
       lastName,
@@ -31,6 +32,7 @@ export class ClientsService {
       phoneNumber,
       location,
       createdAt, password,
+      SocialLinks
     } = clientRegistrationDTO;
 
     const client: Client = {
@@ -44,6 +46,7 @@ export class ClientsService {
       phoneNumber: phoneNumber,
       location: location,
       createdAt: createdAt,
+      SocialLinks : SocialLinks,
     };
 
     this.clients.push(client);
@@ -64,6 +67,7 @@ export class ClientsService {
     id: string,
     updateClientProfileDTO: UpdateClientProfileDTO,
   ): Client {
+    
     const client = this.getClientById(id);
 
     if (updateClientProfileDTO.firstName !== undefined) {
