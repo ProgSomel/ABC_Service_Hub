@@ -26,7 +26,7 @@ export class ClientsService {
 
   }
 
-  clientRegistration(clientRegistrationDTO: ClientRegistrationDTO): Client {
+  clientRegistration(clientRegistrationDTO: ClientRegistrationDTO, file: Express.Multer.File): Client {
     
     const {
       firstName,
@@ -37,7 +37,7 @@ export class ClientsService {
       phoneNumber,
       location,
       createdAt, password,
-      SocialLinks
+      SocialLinks,
     } = clientRegistrationDTO;
 
     const client: Client = {
@@ -52,6 +52,7 @@ export class ClientsService {
       location: location,
       createdAt: createdAt,
       SocialLinks : SocialLinks,
+      file: file.filename,
     };
 
     this.clients.push(client);

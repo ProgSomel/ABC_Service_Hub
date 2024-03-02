@@ -24,19 +24,19 @@ import { MulterError, diskStorage } from 'multer';
 export class ClientsController {
   constructor(private clientsService: ClientsService) {}
 
-  //! Get All CLients 
+  //! Get All CLients
   @Get()
   getAllClients(): Client[] {
     return this.clientsService.getAllClients();
   }
 
-  //! Get Client by ID 
+  //! Get Client by ID
   @Get('/:id')
   getClientById(@Param('id') id: string): Client {
     return this.clientsService.getClientById(id);
   }
 
-  //! Get Client by Id and User Name 
+  //! Get Client by Id and User Name
   @Get()
   getClientByIdAndUserName(
     @Query('id') id: string,
@@ -45,55 +45,56 @@ export class ClientsController {
     return this.clientsService.getClientByIdAndUserName(id, userName);
   }
 
-  //! Client Login 
+  //! Client Login
   @Get('/clientLogin')
-  clientLogin(@Query('email') email:string, @Query('password') password:string): Client {
+  clientLogin(
+    @Query('email') email: string,
+    @Query('password') password: string,
+  ): Client {
     return this.clientsService.clientLogin(email, password);
   }
 
-  //! Get File 
-  @Get('/getFile/:name')
-  getFiles(@Param('name') name, @Res() res) {
-    res.sendFile(name, {root: './uploads'});
-  }
-
-
-
-  //! Client Registration 
+  //! Client Registration
   @Post('/clientRegistration')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      fileFilter(req, file, cb) {
+        if (
+          file.originalname.match(/^.*\.(jpg|webp|png|jpeg|JPG|WEBP|PNG|JPEG)$/)
+        )
+          cb(null, true);
+        else {
+          cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
+        }
+      },
+      // limits: { fileSize: 30000 },
+      storage: diskStorage({
+        destination: './uploads',
+        filename: function (req, file, cb) {
+          cb(null, file.originalname);
+        },
+      }),
+    }),
+  )
   @UsePipes(ValidationPipe)
   clientRegistration(
     @Body() clientRegistrationDTO: ClientRegistrationDTO,
+    @UploadedFile() myFile: Express.Multer.File,
   ): Client {
-    
-    return this.clientsService.clientRegistration(clientRegistrationDTO);
+    clientRegistrationDTO.file = myFile;
+    return this.clientsService.clientRegistration(
+      clientRegistrationDTO,
+      myFile,
+    );
   }
 
-  @Post('upload')
-  @UseInterceptors(FileInterceptor ('file', {
-    fileFilter(req, file, cb) {
-        if(file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/))
-        cb(null, true);
-      else {
-        cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false)
-      }
-
-    },
-    limits: {fileSize: 30000},
-    storage: diskStorage({
-      destination: "./uploads",
-      filename: function (req, file, cb) {
-        cb(null, file.originalname);
-      }
-    })
-  }))
-
-  async uploadFile(@UploadedFile() file: Express.Multer.File) {
-    console.log(file);
-    return "SuccessFully Uploaded The File";
+  //! Get File or Image
+  @Get('/getImage/:name')
+  getFiles(@Param('name') name, @Res() res) {
+    res.sendFile(name, { root: './uploads' });
   }
 
-  //! Update Client Profile 
+  //! Update Client Profile
   @Patch('/:id/updateProfile')
   updateClientProfile(
     @Param('id') id: string,
@@ -102,7 +103,7 @@ export class ClientsController {
     return this.clientsService.updateClientProfile(id, updateClientProfileDTO);
   }
 
-  //! Delete Client Profile 
+  //! Delete Client Profile
   @Delete('/:id/deleteProfile')
   deleteClientProfile(@Param('id') id: string): object {
     return this.clientsService.deleteClientProfile(id);

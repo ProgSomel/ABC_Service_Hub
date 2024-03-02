@@ -54,4 +54,6 @@ export class ClientRegistrationDTO {
 
     @IsDateString()
     createdAt?: Date;
+
+    file?: Express.Multer.File;
 }
