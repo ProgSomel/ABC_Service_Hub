@@ -1,7 +1,5 @@
-// import { Client } from './clients.model';
 import { ClientRegistrationDTO } from './dto/clientRegistrationDTO';
-// import { v4 as uuidv4 } from 'uuid';
-// import { UpdateClientProfileDTO } from './dto/updateClientProfileDTO';
+import { UpdateClientProfileDTO } from './dto/updateClientProfileDTO';
 
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -16,7 +14,7 @@ export class ClientsService {
   ) {}
   // private clients: Client[] = [];
 
-  //! Get All Clients 
+  //! Get All Clients
   // getAllClients(): Client[] {
   //   return this.clients;
   // }
@@ -34,7 +32,7 @@ export class ClientsService {
 
   //! get Client by ID
   async getClientById(id: number): Promise<ClientEntity | undefined> {
-    const found = await this.userRepository.findOneBy( {id: id} );
+    const found = await this.userRepository.findOneBy({ id: id });
     if (!found) {
       throw new NotFoundException(`Client with ID ${id} not Found`);
     } else {
@@ -82,10 +80,13 @@ export class ClientsService {
   //   return client;
   // }
 
-  //! Client Registration 
-  async clientRegistration(clientRegistrationDTO: ClientRegistrationDTO, file: Express.Multer.File):Promise<ClientEntity> {
+  //! Client Registration
+  async clientRegistration(
+    clientRegistrationDTO: ClientRegistrationDTO,
+    file: Express.Multer.File,
+  ): Promise<ClientEntity> {
     clientRegistrationDTO.profilePicture = file?.filename;
-    return this.userRepository.save(clientRegistrationDTO)
+    return this.userRepository.save(clientRegistrationDTO);
   }
 
   // clientLogin(email: string, password: string): Client {
@@ -141,7 +142,22 @@ export class ClientsService {
   //   return client;
   // }
 
-  //! Delete Client 
+  //! Update Client Profile
+  async updateClientProfile(
+    id: number,
+    updateClientProfileDTO: UpdateClientProfileDTO,
+  ): Promise<ClientEntity> {
+    // Update the user with the provided ID using the updatedUser
+    //data;
+    const result = await this.userRepository.update(id, updateClientProfileDTO);
+    if(result.affected === 0) {
+      throw new NotFoundException(`Client with ID ${id} not Found`);
+    }
+    // Return the updated user
+    return this.userRepository.findOneBy({ id: id });
+  }
+
+  //! Delete Client
   // deleteClientProfile(id: string): object {
   //   const found = this.getClientById(id);
   //   this.clients = this.clients.filter((client) => client.id !== found.id);
@@ -150,11 +166,10 @@ export class ClientsService {
 
   async deleteClientProfile(id: number): Promise<string> {
     const result = await this.userRepository.delete(id);
-    if(result.affected === 0) {
+    if (result.affected === 0) {
       throw new NotFoundException(`Client with ID ${id} not Found`);
-    }
-    else {
-      return "Client ptofile deleted successfully";
+    } else {
+      return 'Client ptofile deleted successfully';
     }
   }
 }

@@ -6,7 +6,7 @@ import {
   Param,
   ParseIntPipe,
   Delete,
-  // Patch,
+  Patch,
   // Query,
   UsePipes,
   ValidationPipe,
@@ -18,7 +18,7 @@ import { ClientsService } from './clients.service';
 import { ClientEntity } from './clients.entity';
 import { ClientRegistrationDTO } from './dto/clientRegistrationDTO';
 // import { Client } from './clients.model';
-// import { UpdateClientProfileDTO } from './dto/updateClientProfileDTO';
+import { UpdateClientProfileDTO } from './dto/updateClientProfileDTO';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterError, diskStorage } from 'multer';
 
@@ -97,13 +97,14 @@ export class ClientsController {
 //   }
 
 //   //! Update Client Profile
-//   @Patch('/:id/updateProfile')
-//   updateClientProfile(
-//     @Param('id') id: string,
-//     @Body() updateClientProfileDTO: UpdateClientProfileDTO,
-//   ): Client {
-//     return this.clientsService.updateClientProfile(id, updateClientProfileDTO);
-//   }
+  @Patch('/:id/updateProfile')
+  updateClientProfile(
+    @Param('id') id: number,
+    @Body() updateClientProfileDTO: UpdateClientProfileDTO,
+  ): Promise<ClientEntity> {
+    console.log(ClientEntity);
+    return this.clientsService.updateClientProfile(id, updateClientProfileDTO);
+  }
 
 //   //! Delete Client Profile
   @Delete('/:id/deleteProfile')
