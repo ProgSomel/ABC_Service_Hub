@@ -4,19 +4,21 @@ import {
   Body,
   Get,
   Param,
+  ParseIntPipe,
   Delete,
-  Patch,
-  Query,
+  // Patch,
+  // Query,
   UsePipes,
   ValidationPipe,
   UseInterceptors,
   UploadedFile,
-  Res,
+  // Res,
 } from '@nestjs/common';
 import { ClientsService } from './clients.service';
+import { ClientEntity } from './clients.entity';
 import { ClientRegistrationDTO } from './dto/clientRegistrationDTO';
-import { Client } from './clients.model';
-import { UpdateClientProfileDTO } from './dto/updateClientProfileDTO';
+// import { Client } from './clients.model';
+// import { UpdateClientProfileDTO } from './dto/updateClientProfileDTO';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterError, diskStorage } from 'multer';
 
@@ -24,37 +26,37 @@ import { MulterError, diskStorage } from 'multer';
 export class ClientsController {
   constructor(private clientsService: ClientsService) {}
 
-  //! Get All CLients
+//   //! Get All CLients
   @Get()
-  getAllClients(): Client[] {
+  getAllClients(): Promise<ClientEntity[]> {
     return this.clientsService.getAllClients();
   }
 
-  //! Get Client by ID
+//   //! Get Client by ID
   @Get('/:id')
-  getClientById(@Param('id') id: string): Client {
+  getClientById(@Param('id', ParseIntPipe) id: number): Promise<ClientEntity> {
     return this.clientsService.getClientById(id);
   }
 
-  //! Get Client by Id and User Name
-  @Get()
-  getClientByIdAndUserName(
-    @Query('id') id: string,
-    @Query('userName') userName: string,
-  ): Client {
-    return this.clientsService.getClientByIdAndUserName(id, userName);
-  }
+//   //! Get Client by Id and User Name
+//   @Get()
+//   getClientByIdAndUserName(
+//     @Query('id') id: string,
+//     @Query('userName') userName: string,
+//   ): Client {
+//     return this.clientsService.getClientByIdAndUserName(id, userName);
+//   }
 
-  //! Client Login
-  @Get('/clientLogin')
-  clientLogin(
-    @Query('email') email: string,
-    @Query('password') password: string,
-  ): Client {
-    return this.clientsService.clientLogin(email, password);
-  }
+//   //! Client Login
+//   @Get('/clientLogin')
+//   clientLogin(
+//     @Query('email') email: string,
+//     @Query('password') password: string,
+//   ): Client {
+//     return this.clientsService.clientLogin(email, password);
+//   }
 
-  //! Client Registration
+//   //! Client Registration
   @Post('/clientRegistration')
   @UseInterceptors(
     FileInterceptor('profilePicture', {
@@ -80,7 +82,7 @@ export class ClientsController {
   clientRegistration(
     @Body() clientRegistrationDTO: ClientRegistrationDTO,
     @UploadedFile() myFile: Express.Multer.File,
-  ): Client {
+  ): Promise<ClientEntity> {
     clientRegistrationDTO.profilePicture = myFile.filename;
     return this.clientsService.clientRegistration(
       clientRegistrationDTO,
@@ -88,24 +90,24 @@ export class ClientsController {
     );
   }
 
-  //! Get File or Image
-  @Get('/getImage/:name')
-  getFiles(@Param('name') name, @Res() res) {
-    res.sendFile(name, { root: './uploads' });
-  }
+//   //! Get File or Image
+//   @Get('/getImage/:name')
+//   getFiles(@Param('name') name, @Res() res) {
+//     res.sendFile(name, { root: './uploads' });
+//   }
 
-  //! Update Client Profile
-  @Patch('/:id/updateProfile')
-  updateClientProfile(
-    @Param('id') id: string,
-    @Body() updateClientProfileDTO: UpdateClientProfileDTO,
-  ): Client {
-    return this.clientsService.updateClientProfile(id, updateClientProfileDTO);
-  }
+//   //! Update Client Profile
+//   @Patch('/:id/updateProfile')
+//   updateClientProfile(
+//     @Param('id') id: string,
+//     @Body() updateClientProfileDTO: UpdateClientProfileDTO,
+//   ): Client {
+//     return this.clientsService.updateClientProfile(id, updateClientProfileDTO);
+//   }
 
-  //! Delete Client Profile
+//   //! Delete Client Profile
   @Delete('/:id/deleteProfile')
-  deleteClientProfile(@Param('id') id: string): object {
+  deleteClientProfile(@Param('id', ParseIntPipe) id: number): Promise<string> {
     return this.clientsService.deleteClientProfile(id);
   }
 }
