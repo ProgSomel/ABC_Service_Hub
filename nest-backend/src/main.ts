@@ -7,6 +7,8 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.useStaticAssets(path.join(__dirname, '../uploads')); //to use file publically ... so that we can access from anywhere or from browser
 
+  
+
   await app.listen(3000);
 }
 bootstrap();

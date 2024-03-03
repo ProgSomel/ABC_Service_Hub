@@ -57,10 +57,10 @@ export class ClientsController {
   //! Client Registration
   @Post('/clientRegistration')
   @UseInterceptors(
-    FileInterceptor('file', {
-      fileFilter(req, file, cb) {
+    FileInterceptor('profilePicture', {
+      fileFilter(req, profilePicture, cb) {
         if (
-          file.originalname.match(/^.*\.(jpg|webp|png|jpeg|JPG|WEBP|PNG|JPEG)$/)
+          profilePicture.originalname.match(/^.*\.(jpg|webp|png|jpeg|JPG|WEBP|PNG|JPEG)$/)
         )
           cb(null, true);
         else {
@@ -70,8 +70,8 @@ export class ClientsController {
       // limits: { fileSize: 30000 },
       storage: diskStorage({
         destination: './uploads',
-        filename: function (req, file, cb) {
-          cb(null, file.originalname);
+        filename: function (req, profilePicture, cb) {
+          cb(null, profilePicture.originalname);
         },
       }),
     }),
@@ -81,10 +81,10 @@ export class ClientsController {
     @Body() clientRegistrationDTO: ClientRegistrationDTO,
     @UploadedFile() myFile: Express.Multer.File,
   ): Client {
-    clientRegistrationDTO.file = myFile;
+    clientRegistrationDTO.profilePicture = myFile.filename;
     return this.clientsService.clientRegistration(
       clientRegistrationDTO,
-      myFile,
+      myFile
     );
   }
 

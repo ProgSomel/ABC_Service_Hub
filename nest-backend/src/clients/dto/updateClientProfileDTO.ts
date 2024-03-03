@@ -16,6 +16,6 @@ export class UpdateClientProfileDTO {
   password: string;
   profilePicture?: string;
   phoneNumber?: string;
-  location?: string;
-  createdAt: Date;
+  address?: string;
+  dateOfBirth: Date;
 }

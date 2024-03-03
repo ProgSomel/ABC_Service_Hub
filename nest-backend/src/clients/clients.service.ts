@@ -13,31 +13,33 @@ export class ClientsService {
   }
 
   getClientById(id: string): Client {
-    const found =  this.clients.find((client) => client.id === id);
-    if(!found) {
-      throw new NotFoundException("!Client Not Found");
-
+    const found = this.clients.find((client) => client.id === id);
+    if (!found) {
+      throw new NotFoundException('!Client Not Found');
     }
     return found;
   }
 
   getClientByIdAndUserName(id: string, userName: string): Client {
-    return this.clients.find((client) => client.id === id && client.userName === userName);
-
+    return this.clients.find(
+      (client) => client.id === id && client.userName === userName,
+    );
   }
 
-  clientRegistration(clientRegistrationDTO: ClientRegistrationDTO, file: Express.Multer.File): Client {
-    
+  clientRegistration(
+    clientRegistrationDTO: ClientRegistrationDTO,
+    file: Express.Multer.File,
+  ): Client {
     const {
       firstName,
       lastName,
       userName,
       email,
-      profilePicture,
+      fbLinks,
       phoneNumber,
-      location,
-      createdAt, password,
-      SocialLinks,
+      address,
+      dateOfBirth,
+      password,
     } = clientRegistrationDTO;
 
     const client: Client = {
@@ -47,12 +49,11 @@ export class ClientsService {
       userName: userName,
       email: email,
       password: password,
-      profilePicture: profilePicture,
       phoneNumber: phoneNumber,
-      location: location,
-      createdAt: createdAt,
-      SocialLinks : SocialLinks,
-      file: file.filename,
+      address: address,
+      dateOfBirth: dateOfBirth,
+      fbLinks: fbLinks,
+      profilePicture: file?.filename,
     };
 
     this.clients.push(client);
@@ -60,7 +61,9 @@ export class ClientsService {
   }
 
   clientLogin(email: string, password: string): Client {
-    return this.clients.find(client => client.email === email && client.password === password);
+    return this.clients.find(
+      (client) => client.email === email && client.password === password,
+    );
     // if(client) {
     // return client;
     // }
@@ -73,48 +76,46 @@ export class ClientsService {
     id: string,
     updateClientProfileDTO: UpdateClientProfileDTO,
   ): Client {
-    
     const client = this.getClientById(id);
 
     if (updateClientProfileDTO.firstName !== undefined) {
-    client.firstName = updateClientProfileDTO.firstName;
-  }
+      client.firstName = updateClientProfileDTO.firstName;
+    }
 
-  if (updateClientProfileDTO.lastName !== undefined) {
-    client.lastName = updateClientProfileDTO.lastName;
-  }
+    if (updateClientProfileDTO.lastName !== undefined) {
+      client.lastName = updateClientProfileDTO.lastName;
+    }
 
-  if (updateClientProfileDTO.email !== undefined) {
-    client.email = updateClientProfileDTO.email;
-  }
+    if (updateClientProfileDTO.email !== undefined) {
+      client.email = updateClientProfileDTO.email;
+    }
 
-  if (updateClientProfileDTO.password !== undefined) {
-    client.password = updateClientProfileDTO.password;
-  }
+    if (updateClientProfileDTO.password !== undefined) {
+      client.password = updateClientProfileDTO.password;
+    }
 
-  if (updateClientProfileDTO.phoneNumber !== undefined) {
-    client.phoneNumber = updateClientProfileDTO.phoneNumber;
-  }
+    if (updateClientProfileDTO.phoneNumber !== undefined) {
+      client.phoneNumber = updateClientProfileDTO.phoneNumber;
+    }
 
-  if (updateClientProfileDTO.profilePicture !== undefined) {
-    client.profilePicture = updateClientProfileDTO.profilePicture;
-  }
+    if (updateClientProfileDTO.profilePicture !== undefined) {
+      client.profilePicture = updateClientProfileDTO.profilePicture;
+    }
 
-  if (updateClientProfileDTO.location !== undefined) {
-    client.location = updateClientProfileDTO.location;
-  }
+    if (updateClientProfileDTO.address !== undefined) {
+      client.address = updateClientProfileDTO.address;
+    }
 
-  if (updateClientProfileDTO.createdAt !== undefined) {
-    client.createdAt = updateClientProfileDTO.createdAt;
-  }
+    if (updateClientProfileDTO.dateOfBirth !== undefined) {
+      client.dateOfBirth = updateClientProfileDTO.dateOfBirth;
+    }
 
-  return client;
-
+    return client;
   }
 
   deleteClientProfile(id: string): object {
     const found = this.getClientById(id);
     this.clients = this.clients.filter((client) => client.id !== found.id);
-    return {Message: "Client is deleted"}
+    return { Message: 'Client is deleted' };
   }
 }

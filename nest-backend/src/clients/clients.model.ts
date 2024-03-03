@@ -1,6 +1,5 @@
-
 export class Client {
-    id: string;
+  id: string;
   firstName: string;
   lastName: string;
   userName: string;
@@ -8,9 +7,7 @@ export class Client {
   password: string;
   profilePicture?: string;
   phoneNumber?: string;
-  location?: string;
-    createdAt: Date;
-    errorMessage?: string;
-    SocialLinks? : string;
-    file?: string;
+  address?: string;
+  dateOfBirth: Date;
+  fbLinks?: string;
 }
