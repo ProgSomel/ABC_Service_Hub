@@ -3,8 +3,8 @@ import { UpdateClientProfileDTO } from './dto/updateClientProfileDTO';
 
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ClientEntity } from './clients.entity';
-import { Repository } from 'typeorm';
+import { ClientEntity, status } from './clients.entity';
+import { MoreThan, Repository } from 'typeorm';
 
 @Injectable()
 export class ClientsService {
@@ -14,13 +14,15 @@ export class ClientsService {
   ) {}
   // private clients: Client[] = [];
 
-  //! Get All Clients
+  //! Get  Clients
   // getAllClients(): Client[] {
   //   return this.clients;
   // }
   async getAllClients(): Promise<ClientEntity[]> {
     return this.userRepository.find();
   }
+
+ 
 
   // getClientById(id: string): Client {
   //   const found = this.clients.find((client) => client.id === id);
@@ -38,6 +40,25 @@ export class ClientsService {
     } else {
       return found;
     }
+  }
+
+  //! Get client by Inactive Status 
+  async getClientByInactiveStatus(status: status): Promise<ClientEntity[]> {
+    return this.userRepository.find({
+      where: 
+      { status: status },
+      
+      })
+      
+  }
+
+  //! Get client older 40 
+  async getClientOlder40(): Promise<ClientEntity[]> {
+    return this.userRepository.find({
+      where: 
+      { age: MoreThan(40)},
+      
+      })
   }
 
   // getClientByIdAndUserName(id: string, userName: string): Client {
@@ -155,6 +176,19 @@ export class ClientsService {
     }
     // Return the updated user
     return this.userRepository.findOneBy({ id: id });
+  }
+
+
+  //! Update Status 
+  async updateStatus(id: number, newStatus: status): Promise<ClientEntity> {
+    const client = await this.userRepository.findOneBy({ id: id });
+    if(!client) {
+      throw new NotFoundException(`Client with ID ${id} not Found`);
+    }
+    else {
+      client.status = newStatus;
+      return this.userRepository.save(client);
+    }
   }
 
   //! Delete Client

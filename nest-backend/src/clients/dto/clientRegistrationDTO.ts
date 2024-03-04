@@ -1,4 +1,5 @@
 import { IsAlpha, IsDateString, IsNotEmpty, IsString, IsUrl, Length, Matches } from 'class-validator';
+import { status } from '../clients.entity';
 
 export class ClientRegistrationDTO {
   //! First Name
@@ -18,6 +19,15 @@ export class ClientRegistrationDTO {
   })
   @Matches(/^[^0-9]*$/, { message: 'Name must not contain any numbers' })
   lastName: string;
+
+  //! Full Name
+  @IsAlpha()
+  @IsNotEmpty()
+  @IsString({
+    message: '!Error, Invalid type for Last Name...Last Name Must Be String',
+  })
+  @Matches(/^[^0-9]*$/, { message: 'Name must not contain any numbers' })
+  fullName: string;
 
   //! User Name 
   @IsAlpha()
@@ -51,6 +61,13 @@ export class ClientRegistrationDTO {
       'Password must contain at least one of the special characters (@, #, $, or &)',
   })
   password: string;
+
+  //! Age 
+  age: number;
+
+  //! Status 
+  status: status;
+
 
 
 

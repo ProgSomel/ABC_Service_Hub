@@ -12,10 +12,11 @@ import {
   ValidationPipe,
   UseInterceptors,
   UploadedFile,
+  // ParseEnumPipe,
   // Res,
 } from '@nestjs/common';
 import { ClientsService } from './clients.service';
-import { ClientEntity } from './clients.entity';
+import { ClientEntity, status } from './clients.entity';
 import { ClientRegistrationDTO } from './dto/clientRegistrationDTO';
 // import { Client } from './clients.model';
 import { UpdateClientProfileDTO } from './dto/updateClientProfileDTO';
@@ -37,6 +38,20 @@ export class ClientsController {
   getClientById(@Param('id', ParseIntPipe) id: number): Promise<ClientEntity> {
     return this.clientsService.getClientById(id);
   }
+
+  //! Get Clients by Inactive Status 
+  @Get('/getClients/:status')
+  getClientByInactiveStatus(@Param('status') status: status):Promise<ClientEntity[]> {
+    return this.clientsService. getClientByInactiveStatus(status);
+  }
+
+
+  //! Get CLients older 40 
+  @Get('/getClientsFourty/olderFourty')
+  getClientOlder40():Promise<ClientEntity[]> {
+    return this.clientsService. getClientOlder40();
+  }
+
 
 //   //! Get Client by Id and User Name
 //   @Get()
@@ -104,6 +119,12 @@ export class ClientsController {
   ): Promise<ClientEntity> {
     console.log(ClientEntity);
     return this.clientsService.updateClientProfile(id, updateClientProfileDTO);
+  }
+
+  @Patch('/:id/updateStatus/:status')
+  updateStatus(@Param('id') id: number,
+  @Param('status') newStatus: status):Promise<ClientEntity> {
+    return this.clientsService. updateStatus(id, newStatus)
   }
 
 //   //! Delete Client Profile

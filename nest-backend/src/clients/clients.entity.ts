@@ -1,8 +1,11 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-
+export enum status {
+  Active = 'active',
+  Inactive = 'inactive',
+}
 @Entity('client')
 export class ClientEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
   id: number;
 
   @Column()
@@ -10,6 +13,9 @@ export class ClientEntity {
 
   @Column()
   lastName: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  fullName: string;
 
   @Column()
   userName: string;
@@ -19,6 +25,9 @@ export class ClientEntity {
 
   @Column()
   password: string;
+
+  @Column({ type: 'int', unsigned: true , nullable: true })
+  age: number;
 
   @Column()
   profilePicture?: string;
@@ -34,4 +43,15 @@ export class ClientEntity {
 
   @Column()
   fbLinks?: string;
+
+  
+  @Column({
+    type: 'enum',
+    enum: status,
+    default: status.Active,
+  })
+  status: status;
+
+
+  
 }
