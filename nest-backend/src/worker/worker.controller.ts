@@ -67,6 +67,9 @@ export class WorkersController {
     async deleteWorker(@Param('id') id: number): Promise<void> {
         return await this.workersService.deleteWorker(id);
     }
+
+
+    
     
 
 } 
