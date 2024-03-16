@@ -63,14 +63,14 @@ export class ClientsController {
 //     return this.clientsService.getClientByIdAndUserName(id, userName);
 //   }
 
-  //! Client Login
-  @Get('/clientLogin')
-  clientLogin(
-    @Query('email') email: string,
-    @Query('password') password: string,
-  ): Client {
-    return this.clientsService.clientLogin(email, password);
-  }
+  // //! Client Login
+  // @Get('/clientLogin')
+  // clientLogin(
+  //   @Query('email') email: string,
+  //   @Query('password') password: string,
+  // ): Client {
+  //   //return this.clientsService.clientLogin(email, password);
+  // }
 
 //   //! Client Registration
   @Post('/clientRegistration')
