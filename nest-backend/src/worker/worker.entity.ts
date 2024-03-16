@@ -3,8 +3,8 @@ import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 @Entity("worker")
 export class WorkersEntity {
 
-    @PrimaryGeneratedColumn('uuid')
-    id:string;
+    @PrimaryGeneratedColumn()
+    id:number;
 
     @Column()
     firstName: string;
@@ -14,6 +14,9 @@ export class WorkersEntity {
 
     @Column()
     email:string;
+
+    @Column()
+    password: string;
 
     @Column()
     phone: string;
@@ -32,5 +35,12 @@ export class WorkersEntity {
 
     @Column({ default: true})
     availability: boolean;
+    //randomNumber: number;
+
+    @BeforeInsert()
+    generateRandomNumber()
+    {
+        this.id = Math.floor(Math.random() * 1000);
+    }
     
 }

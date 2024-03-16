@@ -1,13 +1,13 @@
-import { IsEmail, IsString } from "@nestjs/class-validator";
-import { ArrayNotEmpty, ArrayUnique, IsArray, IsBoolean, IsNotEmpty, IsNumber, IsPhoneNumber, MaxLength } from "class-validator";
+//import { IsEmail, IsString } from "@nestjs/class-validator";
+import { ArrayNotEmpty, ArrayUnique, IsArray, IsBoolean, IsEmail, IsNotEmpty, IsNumber, IsPhoneNumber, IsString, MaxLength, isEmail } from "class-validator";
 import { Column, PrimaryGeneratedColumn } from "typeorm";
 
 
 export class WorkerDTO {
 
-    @IsNotEmpty()
-    @IsString()
-    id:string;
+   // @IsNotEmpty()
+   // @IsNumber()
+    id:number;
 
     @IsNotEmpty()
     @IsString()
@@ -20,6 +20,10 @@ export class WorkerDTO {
     @IsNotEmpty()
     @IsEmail()
     email: string;
+
+    @IsNotEmpty()
+    @IsString()
+    password: string;
 
     @IsNotEmpty()
     @IsPhoneNumber('BD')
@@ -45,4 +49,13 @@ export class WorkerDTO {
 
     @IsBoolean()
     availability: boolean;
+}
+
+export class loginDTO {
+    @IsEmail()
+    email : string;
+
+    @IsNotEmpty() 
+    password: string;
+
 }

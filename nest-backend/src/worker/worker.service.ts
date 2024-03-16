@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { WorkersEntity } from "./worker.entity";
 import { Like, Repository } from "typeorm";
+import { WorkerDTO } from "./dto/worker.dto";
 
 
 
@@ -40,5 +41,55 @@ export class WorkersService {
     //   } 
     // } 
 
+    async createWorker(workerDTO: WorkerDTO): Promise<WorkerDTO>
+    {
+        const worker =  await this.workerRepository.save(workerDTO);
+        return this.workerEntityToDTO(worker);
+    }
+
+    async getAllWorkers(): Promise<WorkerDTO[]> {
+        const workers = await this.workerRepository.find();
+        return workers.map(worker => this.workerEntityToDTO(worker));
+    }
+
+    async getWorkerById(id: number): Promise<WorkerDTO>
+    {
+        const worker = await this.workerRepository.findOne({ where: { id } });
+        if (!worker) {
+          throw new NotFoundException(`Worker with ID ${id} not found`);
+        }
+        return this.workerEntityToDTO(worker);
+
+    }
+
+    
+    async deleteWorker(id: number): Promise<void>
+    {
+        await this.workerRepository.delete(id);
+    }
+
+
+
+
+
+
+
+
+
+
+    private workerEntityToDTO(worker: WorkersEntity): WorkerDTO {
+        const workerDTO = new WorkerDTO();
+        workerDTO.id = worker.id;
+        workerDTO.firstName = worker.firstName;
+        workerDTO.lastName = worker.lastName;
+        workerDTO.email = worker.email;
+        workerDTO.phone = worker.phone;
+        workerDTO.address = worker.address;
+        workerDTO.bio = worker.bio;
+        workerDTO.skills = worker.skills;
+        workerDTO.hourlyRate = worker.hourlyRate;
+        workerDTO.availability = worker.availability;
+        return workerDTO;
+      }
 
 }
