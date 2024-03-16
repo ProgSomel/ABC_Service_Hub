@@ -12,7 +12,7 @@ import {
   ValidationPipe,
   UseInterceptors,
   UploadedFile,
-  Query,
+ 
   // ParseEnumPipe,
   // Res,
 } from '@nestjs/common';
