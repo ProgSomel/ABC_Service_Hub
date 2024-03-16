@@ -5,7 +5,7 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   host: 'localhost',
   port: 5432,
   username: 'postgres',
-  password: 'S@mel',
+  password: '1234',
   database: 'ABC_Service_Hub', //Change to your database name
   autoLoadEntities: true,
   synchronize: true,
