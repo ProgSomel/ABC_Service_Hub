@@ -7,6 +7,6 @@ import { WorkersService } from "src/worker/worker.service";
 export class AuthService {
     constructor (
         private workerService: WorkersService,
-        private jwtService: JwtService
+        //private jwtService: JwtService
     ) {}
 }
