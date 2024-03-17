@@ -1,7 +1,6 @@
 import {
   Controller,
   Post,
-  Body,
   Get,
   Param,
   ParseIntPipe,
@@ -23,6 +22,8 @@ import { ClientRegistrationDTO } from './dto/clientRegistrationDTO';
 import { UpdateClientProfileDTO } from './dto/updateClientProfileDTO';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterError, diskStorage } from 'multer';
+import { ContactInfoEntity } from './contact-info.entity';
+import { Body } from '@nestjs/common';
 
 @Controller('clients')
 export class ClientsController {
@@ -47,11 +48,22 @@ export class ClientsController {
   }
 
 
-  //! Get CLients older 40 
+  //! Get Clients older 40 
   @Get('/getClientsFourty/olderFourty')
   getClientOlder40():Promise<ClientEntity[]> {
     return this.clientsService. getClientOlder40();
   }
+
+
+  //! Get Client With Contact Info 
+  @Get('/clientWithContactInfo/:id')
+  async getClientDetails(@Param('id', ParseIntPipe) id: number): Promise<{ client: ClientEntity, contactInfo: ContactInfoEntity }> {
+    const clientDetails = await this.clientsService.getClientDetails(id);
+    return clientDetails;
+  }
+
+
+
 
 
 //   //! Get Client by Id and User Name
@@ -97,14 +109,27 @@ export class ClientsController {
   @UsePipes(ValidationPipe)
   clientRegistration(
     @Body() clientRegistrationDTO: ClientRegistrationDTO,
-    @UploadedFile() myFile: Express.Multer.File,
+    @UploadedFile() myFile: Express.Multer.File
   ): Promise<ClientEntity> {
     clientRegistrationDTO.profilePicture = myFile.filename;
+    
+
+
     return this.clientsService.clientRegistration(
       clientRegistrationDTO,
       myFile
     );
   }
+
+
+  //! Client Contact Info 
+  @Post('/addClientContact/:clientId')
+async addContactInfoOfClient(
+  @Param('clientId') clientId: number,
+  @Body() contactInfoEntity:ContactInfoEntity
+): Promise<ContactInfoEntity> {
+  return this.clientsService.addContactInfoOfClient(clientId,contactInfoEntity);
+}
 
 //   //! Get File or Image
 //   @Get('/getImage/:name')
