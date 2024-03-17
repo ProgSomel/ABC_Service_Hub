@@ -2,7 +2,8 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { WorkersEntity } from "./worker.entity";
 import { Like, Repository } from "typeorm";
-import { WorkerDTO } from "./dto/worker.dto";
+import { WorkerDTO, loginDTO } from "./dto/worker.dto";
+import { JwtService } from "@nestjs/jwt";
 
 
 
@@ -10,7 +11,9 @@ import { WorkerDTO } from "./dto/worker.dto";
 @Injectable()
 export class WorkersService {
 
-    constructor(@InjectRepository(WorkersEntity) private workerRepository: Repository<WorkersEntity>) {}
+    constructor(@InjectRepository(WorkersEntity) 
+    private workerRepository: Repository<WorkersEntity>,
+    private jwtService : JwtService) {}
     
     getUsers(): object {
         return {message: 'Hello Workers'};  
@@ -41,11 +44,22 @@ export class WorkersService {
     //   } 
     // } 
 
-    async createWorker(workerDTO: WorkerDTO): Promise<WorkerDTO>
-    {
-        const worker =  await this.workerRepository.save(workerDTO);
-        return this.workerEntityToDTO(worker);
-    }
+    async createWorker(workerDTO: WorkerDTO): Promise<WorkersEntity> {
+        const worker = new WorkersEntity();
+        worker.id = workerDTO.id;
+        worker.name = workerDTO.name;
+        worker.email = workerDTO.email;
+        worker.password = workerDTO.password;
+        worker.phone = workerDTO.phone;
+        worker.address = workerDTO.address;
+        worker.bio = workerDTO.bio;
+        worker.skills = workerDTO.skills;
+        worker.hourlyRate = workerDTO.hourlyRate;
+        worker.availability = workerDTO.availability;
+
+     
+        return await this.workerRepository.save(worker);
+      }
 
     async getAllWorkers(): Promise<WorkerDTO[]> {
         const workers = await this.workerRepository.find();
@@ -61,7 +75,6 @@ export class WorkersService {
         return this.workerEntityToDTO(worker);
 
     }
-
     
     async deleteWorker(id: number): Promise<void>
     {
@@ -72,16 +85,12 @@ export class WorkersService {
 
 
 
-
-
-
-
-
+///////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
     private workerEntityToDTO(worker: WorkersEntity): WorkerDTO {
         const workerDTO = new WorkerDTO();
         workerDTO.id = worker.id;
-        workerDTO.firstName = worker.firstName;
-        workerDTO.lastName = worker.lastName;
+        workerDTO.name = worker.name;
         workerDTO.email = worker.email;
         workerDTO.phone = worker.phone;
         workerDTO.address = worker.address;
@@ -90,6 +99,10 @@ export class WorkersService {
         workerDTO.hourlyRate = worker.hourlyRate;
         workerDTO.availability = worker.availability;
         return workerDTO;
+      }
+
+      async findOneBy( logindata:loginDTO): Promise<any> {
+        return await this.workerRepository.findOneBy({email:logindata.email});
       }
 
 }

@@ -11,11 +11,8 @@ export class WorkerDTO {
 
     @IsNotEmpty()
     @IsString()
-    firstName: string;
+    name: string;
 
-    @IsNotEmpty()
-    @IsString()
-    lastName: string;
 
     @IsNotEmpty()
     @IsEmail()

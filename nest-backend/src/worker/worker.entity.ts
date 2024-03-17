@@ -7,10 +7,8 @@ export class WorkersEntity {
     id:number;
 
     @Column()
-    firstName: string;
+    name: string;
 
-    @Column()
-    lastName: string;
 
     @Column()
     email:string;

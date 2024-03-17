@@ -1,13 +1,15 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Post, UsePipes, ValidationPipe } from "@nestjs/common";
+import { Body, Controller, Delete, Get, NotFoundException, Param, Post, UseGuards, UsePipes, ValidationPipe } from "@nestjs/common";
 import { WorkersService } from "./worker.service";
 import { WorkersEntity } from "./worker.entity";
 import { WorkerDTO } from "./dto/worker.dto";
+import { AuthGuard } from "./auth/auth.guard";
 
 
 @Controller('workers')
 export class WorkersController {
     constructor (private workersService: WorkersService) {}
 
+    @UseGuards(AuthGuard)
     @Get()
     getUsers():object {
         return this.workersService.getUsers();
@@ -38,14 +40,16 @@ export class WorkersController {
     //     return this.workersService.removeByUsername(username);
     
     
-    // } 
+    // }
+    
+    
 
-    @Post('createWorker')
-    @UsePipes(new ValidationPipe())
-    async createWorker(@Body() WorkerDTO: WorkerDTO): Promise<WorkerDTO>
-    {
-        return this.workersService.createWorker(WorkerDTO);
-    }
+    // @Post('createWorker')
+    // @UsePipes(new ValidationPipe())
+    // async createWorker(@Body() WorkerDTO: WorkerDTO): Promise<WorkerDTO>
+    // {
+    //     return this.workersService.createWorker(WorkerDTO);
+    // }
 
     @Get('allWorkers')
     async getAllWorkers(): Promise<WorkerDTO[]> {
