@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { ContactInfoEntity } from './contact-info.entity';
 export enum status {
   Active = 'active',
   Inactive = 'inactive',
@@ -32,7 +33,7 @@ export class ClientEntity {
   @Column()
   profilePicture?: string;
 
-  @Column()
+  @Column({nullable: true})
   phoneNumber?: string;
 
   @Column()
@@ -43,6 +44,10 @@ export class ClientEntity {
 
   @Column()
   fbLinks?: string;
+
+  @OneToOne(()=>ContactInfoEntity, contactInfo=>contactInfo.client)
+  contactInfo:ContactInfoEntity;
+
 
   
   @Column({
