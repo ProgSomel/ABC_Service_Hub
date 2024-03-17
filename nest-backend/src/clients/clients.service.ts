@@ -7,6 +7,7 @@ import { status } from './clients.entity';
 import { MoreThan, Repository } from 'typeorm';
 import { ContactInfoEntity } from './contact-info.entity';
 import { ClientEntity } from 'src/clients/clients.entity';
+import { OrderEntity } from 'src/order/order.entity';
 
 @Injectable()
 export class ClientsService {
@@ -15,6 +16,8 @@ export class ClientsService {
     private userRepository: Repository<ClientEntity>,
     @InjectRepository(ContactInfoEntity)
     private contactInfoRepository: Repository<ContactInfoEntity>,
+    @InjectRepository(OrderEntity)
+    private orderRepository: Repository<OrderEntity>,
   ) {}
   // private clients: Client[] = [];
 
@@ -114,6 +117,12 @@ export class ClientsService {
     return { client, contactInfo };
   }
 
+  //! Get orders by Client ID 
+  async getOrdersByClientId(clientId: number): Promise<OrderEntity[]> {
+      return this.orderRepository.find({where: {client: {id: clientId}}})
+  }
+ 
+
   
 
   //! Client Registration
@@ -190,6 +199,14 @@ export class ClientsService {
 
   //   return client;
   // }
+
+
+  //! Create order 
+  async createOrder(clientId: number, order: OrderEntity):Promise<OrderEntity> {
+    const client = await this.getClientById(clientId);
+    order.client = client;
+    return this.orderRepository.save(order);
+  }
 
   //! Update Client Profile
   async updateClientProfile(
