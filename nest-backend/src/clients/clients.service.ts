@@ -3,14 +3,21 @@ import { UpdateClientProfileDTO } from './dto/updateClientProfileDTO';
 
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ClientEntity, status } from './clients.entity';
+import { status } from './clients.entity';
 import { MoreThan, Repository } from 'typeorm';
+import { ContactInfoEntity } from './contact-info.entity';
+import { ClientEntity } from 'src/clients/clients.entity';
+import { OrderEntity } from 'src/order/order.entity';
 
 @Injectable()
 export class ClientsService {
   constructor(
     @InjectRepository(ClientEntity)
     private userRepository: Repository<ClientEntity>,
+    @InjectRepository(ContactInfoEntity)
+    private contactInfoRepository: Repository<ContactInfoEntity>,
+    @InjectRepository(OrderEntity)
+    private orderRepository: Repository<OrderEntity>,
   ) {}
   // private clients: Client[] = [];
 
@@ -21,8 +28,6 @@ export class ClientsService {
   async getAllClients(): Promise<ClientEntity[]> {
     return this.userRepository.find();
   }
-
- 
 
   // getClientById(id: string): Client {
   //   const found = this.clients.find((client) => client.id === id);
@@ -42,23 +47,18 @@ export class ClientsService {
     }
   }
 
-  //! Get client by Inactive Status 
+  //! Get client by Inactive Status
   async getClientByInactiveStatus(status: status): Promise<ClientEntity[]> {
     return this.userRepository.find({
-      where: 
-      { status: status },
-      
-      })
-      
+      where: { status: status },
+    });
   }
 
-  //! Get client older 40 
+  //! Get client older 40
   async getClientOlder40(): Promise<ClientEntity[]> {
     return this.userRepository.find({
-      where: 
-      { age: MoreThan(40)},
-      
-      })
+      where: { age: MoreThan(40) },
+    });
   }
 
   // getClientByIdAndUserName(id: string, userName: string): Client {
@@ -101,6 +101,30 @@ export class ClientsService {
   //   return client;
   // }
 
+ 
+  //! Get Client With Contact Info 
+  async getClientDetails(id: number): Promise<{ client: ClientEntity, contactInfo: ContactInfoEntity }> {
+    const client = await this.getClientById(id);
+    if (!client) {
+      throw new NotFoundException(`Client with ID ${id} not found`);
+    }
+
+    const contactInfo = await this.contactInfoRepository.findOne({ where: { client: { id } } });
+    if (!contactInfo) {
+      throw new NotFoundException(`Contact info not found for client with ID ${id}`);
+    }
+
+    return { client, contactInfo };
+  }
+
+  //! Get orders by Client ID 
+  async getOrdersByClientId(clientId: number): Promise<OrderEntity[]> {
+      return this.orderRepository.find({where: {client: {id: clientId}}})
+  }
+ 
+
+  
+
   //! Client Registration
   async clientRegistration(
     clientRegistrationDTO: ClientRegistrationDTO,
@@ -108,6 +132,19 @@ export class ClientsService {
   ): Promise<ClientEntity> {
     clientRegistrationDTO.profilePicture = file?.filename;
     return this.userRepository.save(clientRegistrationDTO);
+  }
+
+  
+  //! Add client Contact Info
+  async addContactInfoOfClient(
+    clientId: number,
+    contactInfo: ContactInfoEntity,
+  ): Promise<ContactInfoEntity> {
+    const client = await this.getClientById(clientId);
+
+    contactInfo.client = client;
+
+    return this.contactInfoRepository.save(contactInfo);
   }
 
   // clientLogin(email: string, password: string): Client {
@@ -163,6 +200,14 @@ export class ClientsService {
   //   return client;
   // }
 
+
+  //! Create order 
+  async createOrder(clientId: number, order: OrderEntity):Promise<OrderEntity> {
+    const client = await this.getClientById(clientId);
+    order.client = client;
+    return this.orderRepository.save(order);
+  }
+
   //! Update Client Profile
   async updateClientProfile(
     id: number,
@@ -171,21 +216,19 @@ export class ClientsService {
     // Update the user with the provided ID using the updatedUser
     //data;
     const result = await this.userRepository.update(id, updateClientProfileDTO);
-    if(result.affected === 0) {
+    if (result.affected === 0) {
       throw new NotFoundException(`Client with ID ${id} not Found`);
     }
     // Return the updated user
     return this.userRepository.findOneBy({ id: id });
   }
 
-
-  //! Update Status 
+  //! Update Status
   async updateStatus(id: number, newStatus: status): Promise<ClientEntity> {
     const client = await this.userRepository.findOneBy({ id: id });
-    if(!client) {
+    if (!client) {
       throw new NotFoundException(`Client with ID ${id} not Found`);
-    }
-    else {
+    } else {
       client.status = newStatus;
       return this.userRepository.save(client);
     }

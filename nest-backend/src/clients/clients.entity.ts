@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { ContactInfoEntity } from './contact-info.entity';
+import { OrderEntity } from 'src/order/order.entity';
 export enum status {
   Active = 'active',
   Inactive = 'inactive',
@@ -32,7 +34,7 @@ export class ClientEntity {
   @Column()
   profilePicture?: string;
 
-  @Column()
+  @Column({nullable: true})
   phoneNumber?: string;
 
   @Column()
@@ -44,13 +46,25 @@ export class ClientEntity {
   @Column()
   fbLinks?: string;
 
-  
+
   @Column({
     type: 'enum',
     enum: status,
     default: status.Active,
   })
   status: status;
+
+  @OneToOne(()=>ContactInfoEntity, contactInfo=>contactInfo.client)
+  contactInfo:ContactInfoEntity;
+
+  //! one client has many orders
+  @OneToMany(()=> OrderEntity, order => order.client, {cascade: true})
+  orders: OrderEntity[];
+
+
+
+  
+ 
 
 
   
