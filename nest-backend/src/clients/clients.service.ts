@@ -9,6 +9,8 @@ import { ContactInfoEntity } from './contact-info.entity';
 import { ClientEntity } from 'src/clients/clients.entity';
 import { OrderEntity } from 'src/order/order.entity';
 import { ServiceEntity } from 'src/service/services.entity';
+import { JwtService } from '@nestjs/jwt';
+import { ClientLoginDTO } from './dto/clientLoginDTO';
 
 @Injectable()
 export class ClientsService {
@@ -21,6 +23,7 @@ export class ClientsService {
     private orderRepository: Repository<OrderEntity>,
     @InjectRepository(ServiceEntity)
     private serviceRepository: Repository<ServiceEntity>,
+    private jwtService: JwtService
   ) {}
   // private clients: Client[] = [];
 
@@ -292,5 +295,9 @@ export class ClientsService {
     } else {
       return 'Client ptofile deleted successfully';
     }
+  }
+
+  async findOne( clientLoginData:ClientLoginDTO): Promise<any> {
+    return await this.userRepository.findOneBy({email:clientLoginData.email});
   }
 }
