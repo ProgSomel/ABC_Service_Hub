@@ -11,6 +11,7 @@ import {
   ValidationPipe,
   UseInterceptors,
   UploadedFile,
+  UseGuards,
 
   // ParseEnumPipe,
   // Res,
@@ -26,12 +27,14 @@ import { ContactInfoEntity } from './contact-info.entity';
 import { Body } from '@nestjs/common';
 import { OrderEntity } from 'src/order/order.entity';
 import { ServiceEntity } from 'src/service/services.entity';
+import { AuthGuard} from './client-auth/client-auth.guard';
 
 @Controller('clients')
 export class ClientsController {
   constructor(private clientsService: ClientsService) {}
 
   //   //! Get All CLients
+  @UseGuards(AuthGuard)
   @Get()
   getAllClients(): Promise<ClientEntity[]> {
     return this.clientsService.getAllClients();

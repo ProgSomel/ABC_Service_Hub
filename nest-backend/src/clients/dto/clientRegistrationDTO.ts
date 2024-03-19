@@ -1,4 +1,12 @@
-import { IsAlpha, IsDateString, IsNotEmpty, IsString, IsUrl, Length, Matches } from 'class-validator';
+import {
+  IsAlpha,
+  IsDateString,
+  IsNotEmpty,
+  IsString,
+  IsUrl,
+  Length,
+  Matches,
+} from 'class-validator';
 import { status } from '../clients.entity';
 
 export class ClientRegistrationDTO {
@@ -29,7 +37,7 @@ export class ClientRegistrationDTO {
   @Matches(/^[^0-9]*$/, { message: 'Name must not contain any numbers' })
   fullName: string;
 
-  //! User Name 
+  //! User Name
   @IsAlpha()
   @IsNotEmpty()
   @IsString({
@@ -38,8 +46,7 @@ export class ClientRegistrationDTO {
   @Matches(/^[^0-9]*$/, { message: 'Name must not contain any numbers' })
   userName: string;
 
-
-  //! Email 
+  //! Email
   @IsString({ message: 'Email must be a string' })
   @Length(1, 30, {
     message: 'Email address must be between 1 and 30 characters',
@@ -52,8 +59,7 @@ export class ClientRegistrationDTO {
   })
   email: string;
 
-
-  //! Password 
+  //! Password
   @IsString({ message: 'Email must be a string' })
   @IsNotEmpty({ message: '!Error. Password is Required' })
   @Matches(/[@#$&]/, {
@@ -62,34 +68,28 @@ export class ClientRegistrationDTO {
   })
   password: string;
 
-  //! Age 
+  //! Age
   age: number;
 
-  //! Status 
+  //! Status
   status: status;
 
-
-
-
-  //! Profile Picture 
+  //! Profile Picture
   profilePicture?: string;
 
-  //! Phone Number 
+  //! Phone Number
   @Length(1, 11, { message: 'Phone number must not be longer than 11 digits' })
   phoneNumber?: string;
 
-
-  //! Address 
+  //! Address
   address?: string;
 
-
-  //! URL 
+  //! URL
   @IsUrl()
-  fbLinks?: string
+  fbLinks?: string;
 
   // @Matches(/^(\d{2})-(\d{2})-(\d{4})$/, {message:"Invalid Date Format"})
-  //! Date of Birth 
-    @IsDateString()
-    dateOfBirth?: Date;
-
+  //! Date of Birth
+  @IsDateString()
+  dateOfBirth?: Date;
 }
