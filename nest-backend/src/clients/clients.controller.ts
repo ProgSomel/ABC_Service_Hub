@@ -25,6 +25,7 @@ import { MulterError, diskStorage } from 'multer';
 import { ContactInfoEntity } from './contact-info.entity';
 import { Body } from '@nestjs/common';
 import { OrderEntity } from 'src/order/order.entity';
+import { ServiceEntity } from 'src/service/services.entity';
 
 @Controller('clients')
 export class ClientsController {
@@ -83,11 +84,18 @@ export class ClientsController {
   //   //return this.clientsService.clientLogin(email, password);
   // }
 
-
-  //! Get OrdersBy ClientId 
+  //! Get OrdersBy ClientId
   @Get('/getOrders/:clientId')
-  async getOrdersByClientId(@Param('clientId') clienId: number):Promise<OrderEntity[]> {
+  async getOrdersByClientId(
+    @Param('clientId') clienId: number,
+  ): Promise<OrderEntity[]> {
     return this.clientsService.getOrdersByClientId(clienId);
+  }
+
+  //! Get Services with Clients
+  @Get('/getServicesWithClient')
+  async getServicesWithClients(): Promise<ServiceEntity[]> {
+    return this.clientsService.getServicesWithClients();
   }
 
   //   //! Client Registration
@@ -148,6 +156,15 @@ export class ClientsController {
     return this.clientsService.createOrder(clientId, order);
   }
 
+  //! Add Services to Client
+  @Post('/addService/:serviceId/client/:clientId')
+  async addServicesToClient(
+    @Param('serviceId') serviceId: number,
+    @Param('clientId') clientId: number,
+  ): Promise<ServiceEntity> {
+    return this.clientsService.addServicesToClient(serviceId, clientId);
+  }
+
   //   //! Get File or Image
   //   @Get('/getImage/:name')
   //   getFiles(@Param('name') name, @Res() res) {
@@ -176,5 +193,11 @@ export class ClientsController {
   @Delete('/:id/deleteProfile')
   deleteClientProfile(@Param('id', ParseIntPipe) id: number): Promise<string> {
     return this.clientsService.deleteClientProfile(id);
+  }
+
+  //! Remove service from client 
+  @Delete('/:clientId/removeService/:serviceId')
+  async removeServiceFromClient(@Param('clientId') clientId: number, @Param('serviceId') serviceId: number):Promise<object> {
+    return this.clientsService.removeServiceFromClient(clientId, serviceId);
   }
 }

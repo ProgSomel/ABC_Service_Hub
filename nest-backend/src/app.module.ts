@@ -5,6 +5,6 @@ import { typeOrmConfig } from './config/typeORM.config';
 import { ServiceModule } from './service/service.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(typeOrmConfig), ServiceModule, ClientsModule]
+  imports: [TypeOrmModule.forRoot(typeOrmConfig), ClientsModule, ServiceModule]
 })
 export class AppModule {}

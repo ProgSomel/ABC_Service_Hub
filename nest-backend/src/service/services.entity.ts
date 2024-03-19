@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { ClientEntity } from 'src/clients/clients.entity';
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 export enum status {
   Active = 'active',
   Inactive = 'inactive',
@@ -6,7 +7,7 @@ export enum status {
 @Entity('service')
 export class ServiceEntity {
   @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
-  id: number;
+  serviceId: number;
 
   @Column()
   service_name: string;
@@ -38,4 +39,7 @@ export class ServiceEntity {
     default: status.Active,
   })
   status: status;
+
+  @ManyToMany(() => ClientEntity, (client) => client.services)
+  clients: ClientEntity[];
 }

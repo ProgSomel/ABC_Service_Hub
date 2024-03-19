@@ -8,6 +8,7 @@ import { MoreThan, Repository } from 'typeorm';
 import { ContactInfoEntity } from './contact-info.entity';
 import { ClientEntity } from 'src/clients/clients.entity';
 import { OrderEntity } from 'src/order/order.entity';
+import { ServiceEntity } from 'src/service/services.entity';
 
 @Injectable()
 export class ClientsService {
@@ -18,6 +19,8 @@ export class ClientsService {
     private contactInfoRepository: Repository<ContactInfoEntity>,
     @InjectRepository(OrderEntity)
     private orderRepository: Repository<OrderEntity>,
+    @InjectRepository(ServiceEntity)
+    private serviceRepository: Repository<ServiceEntity>,
   ) {}
   // private clients: Client[] = [];
 
@@ -101,29 +104,36 @@ export class ClientsService {
   //   return client;
   // }
 
- 
-  //! Get Client With Contact Info 
-  async getClientDetails(id: number): Promise<{ client: ClientEntity, contactInfo: ContactInfoEntity }> {
+  //! Get Client With Contact Info
+  async getClientDetails(
+    id: number,
+  ): Promise<{ client: ClientEntity; contactInfo: ContactInfoEntity }> {
     const client = await this.getClientById(id);
     if (!client) {
       throw new NotFoundException(`Client with ID ${id} not found`);
     }
 
-    const contactInfo = await this.contactInfoRepository.findOne({ where: { client: { id } } });
+    const contactInfo = await this.contactInfoRepository.findOne({
+      where: { client: { id } },
+    });
     if (!contactInfo) {
-      throw new NotFoundException(`Contact info not found for client with ID ${id}`);
+      throw new NotFoundException(
+        `Contact info not found for client with ID ${id}`,
+      );
     }
 
     return { client, contactInfo };
   }
 
-  //! Get orders by Client ID 
+  //! Get orders by Client ID
   async getOrdersByClientId(clientId: number): Promise<OrderEntity[]> {
-      return this.orderRepository.find({where: {client: {id: clientId}}})
+    return this.orderRepository.find({ where: { client: { id: clientId } } });
   }
- 
 
-  
+  //! Get services with clients
+  async getServicesWithClients(): Promise<ServiceEntity[]> {
+    return this.serviceRepository.find({ relations: ['clients'] });
+  }
 
   //! Client Registration
   async clientRegistration(
@@ -134,7 +144,6 @@ export class ClientsService {
     return this.userRepository.save(clientRegistrationDTO);
   }
 
-  
   //! Add client Contact Info
   async addContactInfoOfClient(
     clientId: number,
@@ -145,6 +154,22 @@ export class ClientsService {
     contactInfo.client = client;
 
     return this.contactInfoRepository.save(contactInfo);
+  }
+
+  //! add Services to client
+  async addServicesToClient(
+    serviceId: number,
+    clientId: number,
+  ): Promise<ServiceEntity> {
+    const service = await this.serviceRepository.findOne({
+      where: { serviceId: serviceId },
+      relations: ['clients'],
+    });
+    const client = await this.getClientById(clientId);
+    if (service && client) {
+      service.clients = [...service.clients, client];
+      return this.serviceRepository.save(service);
+    }
   }
 
   // clientLogin(email: string, password: string): Client {
@@ -200,9 +225,11 @@ export class ClientsService {
   //   return client;
   // }
 
-
-  //! Create order 
-  async createOrder(clientId: number, order: OrderEntity):Promise<OrderEntity> {
+  //! Create order
+  async createOrder(
+    clientId: number,
+    order: OrderEntity,
+  ): Promise<OrderEntity> {
     const client = await this.getClientById(clientId);
     order.client = client;
     return this.orderRepository.save(order);
@@ -231,6 +258,23 @@ export class ClientsService {
     } else {
       client.status = newStatus;
       return this.userRepository.save(client);
+    }
+  }
+
+  //! Remove Service from Client
+  async removeServiceFromClient(
+    clientId: number,
+    serviceId: number,
+  ): Promise<object> {
+    const service = await this.serviceRepository.findOne({
+      where: { serviceId: serviceId },
+      relations: ['clients']
+  });
+    const client = await this.getClientById(clientId);
+    if (service && client) {
+      service.clients = service.clients.filter((c) => c.id !== client.id);
+      await this.serviceRepository.save(service);
+      return {Message:`Service ${serviceId} is Deleted from the Client ${clientId}`}
     }
   }
 
