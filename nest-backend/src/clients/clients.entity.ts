@@ -1,6 +1,7 @@
-import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { ContactInfoEntity } from './contact-info.entity';
 import { OrderEntity } from 'src/order/order.entity';
+import { ServiceEntity } from 'src/service/services.entity';
 export enum status {
   Active = 'active',
   Inactive = 'inactive',
@@ -60,6 +61,11 @@ export class ClientEntity {
   //! one client has many orders
   @OneToMany(()=> OrderEntity, order => order.client, {cascade: true})
   orders: OrderEntity[];
+
+  @ManyToMany(()=> ServiceEntity, service=>service.clients)
+  @JoinTable()
+  services: ServiceEntity[];
+
 
 
 

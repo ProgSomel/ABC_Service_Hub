@@ -7,6 +7,7 @@ import { WorkersModule } from './worker/worker.module';
 import {AuthModule} from './worker/auth/auth.module';
 
 @Module({
+
   imports: [TypeOrmModule.forRoot(typeOrmConfig), ServiceModule, ClientsModule, AuthModule, WorkersModule]
 })
 export class AppModule {}
