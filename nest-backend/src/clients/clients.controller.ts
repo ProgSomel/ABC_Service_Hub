@@ -27,15 +27,16 @@ import { ContactInfoEntity } from './contact-info.entity';
 import { Body } from '@nestjs/common';
 import { OrderEntity } from 'src/order/order.entity';
 import { ServiceEntity } from 'src/service/services.entity';
-import { AuthGuard} from './client-auth/client-auth.guard';
+import { ClientAuthGuard } from './client-auth/client-auth.guard';
+
 
 @Controller('clients')
 export class ClientsController {
   constructor(private clientsService: ClientsService) {}
 
   //   //! Get All CLients
-  @UseGuards(AuthGuard)
   @Get()
+  @UseGuards(ClientAuthGuard)
   getAllClients(): Promise<ClientEntity[]> {
     return this.clientsService.getAllClients();
   }
@@ -96,7 +97,7 @@ export class ClientsController {
   }
 
   //! Get Services with Clients
-  @Get('/getServicesWithClient')
+  @Get('/servicesAndClients')
   async getServicesWithClients(): Promise<ServiceEntity[]> {
     return this.clientsService.getServicesWithClients();
   }
@@ -162,8 +163,8 @@ export class ClientsController {
   //! Add Services to Client
   @Post('/addService/:serviceId/client/:clientId')
   async addServicesToClient(
-    @Param('serviceId') serviceId: number,
-    @Param('clientId') clientId: number,
+    @Param('serviceId', ParseIntPipe) serviceId: number,
+    @Param('clientId', ParseIntPipe) clientId: number,
   ): Promise<ServiceEntity> {
     return this.clientsService.addServicesToClient(serviceId, clientId);
   }
@@ -198,9 +199,12 @@ export class ClientsController {
     return this.clientsService.deleteClientProfile(id);
   }
 
-  //! Remove service from client 
+  //! Remove service from client
   @Delete('/:clientId/removeService/:serviceId')
-  async removeServiceFromClient(@Param('clientId') clientId: number, @Param('serviceId') serviceId: number):Promise<object> {
+  async removeServiceFromClient(
+    @Param('clientId') clientId: number,
+    @Param('serviceId') serviceId: number,
+  ): Promise<object> {
     return this.clientsService.removeServiceFromClient(clientId, serviceId);
   }
 }

@@ -11,7 +11,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class ClientAuthGuard implements CanActivate {
   private readonly jwtSecret: string;
 
   constructor(private jwtService: JwtService) {
@@ -36,7 +36,7 @@ export class AuthGuard implements CanActivate {
   }
 
   private extractTokenFromHeader(request: Request): string | undefined {
-    const [type, token] = request.headers.authorization?.split('') ?? [];
+    const [type, token] = request.headers.authorization?.split(' ') ?? [];
     return type === 'Bearer' ? token : undefined;
   }
 }
