@@ -28,7 +28,7 @@ import { Body } from '@nestjs/common';
 import { OrderEntity } from 'src/order/order.entity';
 import { ServiceEntity } from 'src/service/services.entity';
 import { ClientAuthGuard } from './client-auth/client-auth.guard';
-
+import { SendMailDTO } from './dto/mailDTO';
 
 @Controller('clients')
 export class ClientsController {
@@ -207,4 +207,18 @@ export class ClientsController {
   ): Promise<object> {
     return this.clientsService.removeServiceFromClient(clientId, serviceId);
   }
+
+
+  //! Email Sending 
+  @Post('/emailSending')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async sendingEmail(@Body() emailDTO: SendMailDTO): Promise<{ success: boolean; message: string }> {
+    try {
+      await this.clientsService.sendingEmail(emailDTO);
+      return { success: true, message: 'Email sent successfully' };
+    } catch (error) {
+      return { success: false, message: 'Failed to send email' };
+    }
+  }
+  
 }
