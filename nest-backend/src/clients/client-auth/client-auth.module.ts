@@ -20,5 +20,6 @@ dotenv.config();
   ],
   providers: [ClientAuthService],
   controllers: [ClientAuthController],
+  exports: [ClientAuthService]
 })
 export class ClientAuthModule {}

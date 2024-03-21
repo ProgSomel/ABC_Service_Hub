@@ -6,7 +6,7 @@ export enum status {
 }
 @Entity('service')
 export class ServiceEntity {
-  @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
+  @PrimaryGeneratedColumn()
   serviceId: number;
 
   @Column()

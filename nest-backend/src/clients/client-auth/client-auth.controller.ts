@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UploadedFile, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Post, Session, UploadedFile, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterError, diskStorage } from 'multer';
 import { ClientRegistrationDTO } from '../dto/clientRegistrationDTO';
@@ -54,7 +54,8 @@ export class ClientAuthController {
       }
 
       @Post('/clientLogin')
-      clientSignIn(@Body() clientLogindata: ClientLoginDTO) {
+      clientSignIn(@Body() clientLogindata: ClientLoginDTO, @Session() session) {
+        session.email = clientLogindata.email;
         return this.clientAuthService.clientSignIn(clientLogindata);
       }
 }

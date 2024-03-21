@@ -11,7 +11,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class ClientAuthGuard implements CanActivate {
   private readonly jwtSecret: string;
 
   constructor(private jwtService: JwtService) {
