@@ -11,6 +11,8 @@ import { OrderEntity } from 'src/order/order.entity';
 import { ServiceEntity } from 'src/service/services.entity';
 import { JwtService } from '@nestjs/jwt';
 import { ClientLoginDTO } from './dto/clientLoginDTO';
+import { MailerService } from '@nestjs-modules/mailer';
+import { SendMailDTO } from './dto/mailDTO';
 
 @Injectable()
 export class ClientsService {
@@ -23,7 +25,8 @@ export class ClientsService {
     private orderRepository: Repository<OrderEntity>,
     @InjectRepository(ServiceEntity)
     private serviceRepository: Repository<ServiceEntity>,
-    private jwtService: JwtService
+    private jwtService: JwtService,
+    private readonly mailerService: MailerService
   ) {}
   // private clients: Client[] = [];
 
@@ -300,4 +303,16 @@ export class ClientsService {
   async findOne( clientLoginData:ClientLoginDTO): Promise<any> {
     return await this.userRepository.findOneBy({email:clientLoginData.email});
   }
+
+  //! Sen Mail 
+  async sendingEmail(emailDTO: SendMailDTO) {
+    const { recipient, subject, text } = emailDTO;
+    const mail = await this.mailerService.sendMail({
+        to: recipient,
+        subject: subject,
+        text: text,
+    });
+    console.log(mail);
+}
+
 }
