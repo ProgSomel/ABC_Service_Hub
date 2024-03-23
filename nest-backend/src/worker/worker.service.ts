@@ -106,10 +106,10 @@ export class WorkersService {
         return await this.serviceRepository.find();
     }
 
-    async getServiceById(id: number): Promise<ServiceEntity> {
-        const service = await this.serviceRepository.findOne({ where: { id } });
+    async getServiceById(serviceId: number): Promise<ServiceEntity> {
+        const service = await this.serviceRepository.findOne({ where: { serviceId } });
         if (!service) {
-          throw new NotFoundException(`Service with ID ${id} not found`);
+          throw new NotFoundException(`Service with ID ${serviceId} not found`);
         }
         return service;
     }
@@ -119,7 +119,7 @@ export class WorkersService {
         if (!worker) {
           throw new NotFoundException(`Worker with ID ${workerId} not found`);
         }
-        const service = await this.serviceRepository.findOne({ where: { id: serviceId } });
+        const service = await this.serviceRepository.findOne({ where: { serviceId: serviceId } });
         if (!service) {
           throw new NotFoundException(`Service with ID ${serviceId} not found`);
         }
@@ -132,11 +132,11 @@ export class WorkersService {
         if (!worker) {
           throw new NotFoundException(`Worker with ID ${workerId} not found`);
         }
-        const service = await this.serviceRepository.findOne({ where: { id: serviceId } });
+        const service = await this.serviceRepository.findOne({ where: { serviceId: serviceId } });
         if (!service) {
           throw new NotFoundException(`Service with ID ${serviceId} not found`);
         }
-        worker.services = worker.services.filter(s => s.id !== serviceId);
+        worker.services = worker.services.filter(s => s.serviceId !== serviceId);
         return await this.workerRepository.save(worker);
       }
 
