@@ -1,5 +1,6 @@
 import { ClientEntity } from "src/clients/clients.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { WorkersEntity } from "src/worker/worker.entity";
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 export enum OrderStatus {
     PENDING = 'pending',
@@ -40,4 +41,11 @@ export class OrderEntity {
 //!   many orders belong to one customer
     @ManyToOne(()=> ClientEntity, client => client.orders)
     client: ClientEntity;
+
+    @ManyToOne(() => WorkersEntity, worker => worker.orders)
+    worker: WorkersEntity;
+
+    // @OneToOne(() => PaymentEntity, payment => payment.order)
+    // @JoinColumn()
+    // payment: PaymentEntity;
 }

@@ -4,6 +4,7 @@ import { WorkersEntity } from "./worker.entity";
 import { Like, Repository } from "typeorm";
 import { WorkerDTO, loginDTO } from "./dto/worker.dto";
 import { JwtService } from "@nestjs/jwt";
+import { ServiceEntity } from "src/service/services.entity";
 
 
 
@@ -13,6 +14,8 @@ export class WorkersService {
 
     constructor(@InjectRepository(WorkersEntity) 
     private workerRepository: Repository<WorkersEntity>,
+    @InjectRepository(ServiceEntity)
+    private serviceRepository: Repository<ServiceEntity>,
     private jwtService : JwtService) {}
     
     getUsers(): object {
@@ -50,10 +53,10 @@ export class WorkersService {
         worker.name = workerDTO.name;
         worker.email = workerDTO.email;
         worker.password = workerDTO.password;
-        worker.phone = workerDTO.phone;
-        worker.address = workerDTO.address;
-        worker.bio = workerDTO.bio;
-        worker.skills = workerDTO.skills;
+        // worker.phone = workerDTO.phone;
+        // worker.address = workerDTO.address;
+        // worker.bio = workerDTO.bio;
+       // worker.skills = workerDTO.skills;
         worker.hourlyRate = workerDTO.hourlyRate;
         worker.availability = workerDTO.availability;
 
@@ -61,18 +64,18 @@ export class WorkersService {
         return await this.workerRepository.save(worker);
       }
 
-    async getAllWorkers(): Promise<WorkerDTO[]> {
+    async getAllWorkers(): Promise<WorkersEntity[]> {
         const workers = await this.workerRepository.find();
-        return workers.map(worker => this.workerEntityToDTO(worker));
+        return workers;
     }
 
-    async getWorkerById(id: number): Promise<WorkerDTO>
+    async getWorkerById(id: number): Promise<WorkersEntity>
     {
         const worker = await this.workerRepository.findOne({ where: { id } });
         if (!worker) {
           throw new NotFoundException(`Worker with ID ${id} not found`);
         }
-        return this.workerEntityToDTO(worker);
+        return worker;
 
     }
     
@@ -82,24 +85,67 @@ export class WorkersService {
     }
 
 
+    async updateWorker(id: number, workerDTO: WorkerDTO): Promise<WorkersEntity>
+    {
+        const worker = await this.workerRepository.findOne({ where: { id }});
+        if (!worker) {
+          throw new NotFoundException(`Worker with ID ${id} not found`);
+        }
+        worker.name = workerDTO.name;
+        worker.email = workerDTO.email;
+        // worker.phone = workerDTO.phone;
+        // worker.address = workerDTO.address;
+        // worker.bio = workerDTO.bio;
+        //worker.skills = workerDTO.skills;
+        worker.hourlyRate = workerDTO.hourlyRate;
+        worker.availability = workerDTO.availability;
+        return await this.workerRepository.save(worker);
+    }
+
+    async getAllServices(): Promise<ServiceEntity[]> {
+        return await this.serviceRepository.find();
+    }
+
+    async getServiceById(id: number): Promise<ServiceEntity> {
+        const service = await this.serviceRepository.findOne({ where: { id } });
+        if (!service) {
+          throw new NotFoundException(`Service with ID ${id} not found`);
+        }
+        return service;
+    }
+
+    async addServiceToWorker(workerId: number, serviceId: number): Promise<WorkersEntity> {
+        const worker = await this.workerRepository.findOne({ where: { id: workerId } });
+        if (!worker) {
+          throw new NotFoundException(`Worker with ID ${workerId} not found`);
+        }
+        const service = await this.serviceRepository.findOne({ where: { id: serviceId } });
+        if (!service) {
+          throw new NotFoundException(`Service with ID ${serviceId} not found`);
+        }
+        worker.services.push(service);
+        return await this.workerRepository.save(worker);
+      }
+
+      async removeServiceFromWorker(workerId: number, serviceId: number): Promise<WorkersEntity> {
+        const worker = await this.workerRepository.findOne({ where: { id: workerId } });
+        if (!worker) {
+          throw new NotFoundException(`Worker with ID ${workerId} not found`);
+        }
+        const service = await this.serviceRepository.findOne({ where: { id: serviceId } });
+        if (!service) {
+          throw new NotFoundException(`Service with ID ${serviceId} not found`);
+        }
+        worker.services = worker.services.filter(s => s.id !== serviceId);
+        return await this.workerRepository.save(worker);
+      }
+
 
 
 
 ///////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
-    private workerEntityToDTO(worker: WorkersEntity): WorkerDTO {
-        const workerDTO = new WorkerDTO();
-        workerDTO.id = worker.id;
-        workerDTO.name = worker.name;
-        workerDTO.email = worker.email;
-        workerDTO.phone = worker.phone;
-        workerDTO.address = worker.address;
-        workerDTO.bio = worker.bio;
-        workerDTO.skills = worker.skills;
-        workerDTO.hourlyRate = worker.hourlyRate;
-        workerDTO.availability = worker.availability;
-        return workerDTO;
-      }
+
 
       async findOneBy( logindata:loginDTO): Promise<any> {
         return await this.workerRepository.findOneBy({email:logindata.email});

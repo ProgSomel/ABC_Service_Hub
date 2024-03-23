@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { WorkersEntity } from '../worker/worker.entity';
+import { join } from 'path';
 export enum status {
   Active = 'active',
   Inactive = 'inactive',
@@ -12,30 +14,12 @@ export class ServiceEntity {
   service_name: string;
 
   @Column()
-  provider_name: string;
-
-  @Column()
-  provider_contact: string;
-
-  @Column()
   service_description: string;
 
   @Column()
   price: number;
 
-  @Column()
-  location: string;
-
-  @Column()
-  rating: string;
-
-  @Column()
-  serviceImg?: string;
-
-  @Column({
-    type: 'enum',
-    enum: status,
-    default: status.Active,
-  })
-  status: status;
+  @ManyToMany(() => WorkersEntity, worker => worker.services)
+  @JoinTable()
+  workers: WorkersEntity[];
 }

@@ -6,10 +6,14 @@ import { WorkersEntity } from "./worker.entity";
 import { JwtModule } from "@nestjs/jwt";
 import { AuthService } from "./auth/auth.service";
 import { ClientEntity } from "src/clients/clients.entity";
+import { ServiceEntity } from "src/service/services.entity";
+import { ReviewEntity } from "src/review/review.entity";
+import { OrderEntity } from "src/order/order.entity";
+import { WorkerInfoEntity } from "./workerInfo.entity";
 
 
 @Module({
-    imports: [TypeOrmModule.forFeature([WorkersEntity, ClientEntity ]),
+    imports: [TypeOrmModule.forFeature([WorkersEntity, ClientEntity, ServiceEntity, ReviewEntity,OrderEntity, ReviewEntity, WorkerInfoEntity]),
     
     JwtModule.register({
         global: true,
