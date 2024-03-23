@@ -11,6 +11,7 @@ import {
   ValidationPipe,
   UseInterceptors,
   UploadedFile,
+  UseGuards,
 
   // ParseEnumPipe,
   // Res,
@@ -25,6 +26,9 @@ import { MulterError, diskStorage } from 'multer';
 import { ContactInfoEntity } from './contact-info.entity';
 import { Body } from '@nestjs/common';
 import { OrderEntity } from 'src/order/order.entity';
+import { ServiceEntity } from 'src/service/services.entity';
+import { ClientAuthGuard } from './client-auth/client-auth.guard';
+import { SendMailDTO } from './dto/mailDTO';
 
 @Controller('clients')
 export class ClientsController {
@@ -32,6 +36,7 @@ export class ClientsController {
 
   //   //! Get All CLients
   @Get()
+  @UseGuards(ClientAuthGuard)
   getAllClients(): Promise<ClientEntity[]> {
     return this.clientsService.getAllClients();
   }
@@ -83,11 +88,18 @@ export class ClientsController {
   //   //return this.clientsService.clientLogin(email, password);
   // }
 
-
-  //! Get OrdersBy ClientId 
+  //! Get OrdersBy ClientId
   @Get('/getOrders/:clientId')
-  async getOrdersByClientId(@Param('clientId') clienId: number):Promise<OrderEntity[]> {
+  async getOrdersByClientId(
+    @Param('clientId') clienId: number,
+  ): Promise<OrderEntity[]> {
     return this.clientsService.getOrdersByClientId(clienId);
+  }
+
+  //! Get Services with Clients
+  @Get('/servicesAndClients')
+  async getServicesWithClients(): Promise<ServiceEntity[]> {
+    return this.clientsService.getServicesWithClients();
   }
 
   //   //! Client Registration
@@ -148,6 +160,15 @@ export class ClientsController {
     return this.clientsService.createOrder(clientId, order);
   }
 
+  //! Add Services to Client
+  @Post('/addService/:serviceId/client/:clientId')
+  async addServicesToClient(
+    @Param('serviceId', ParseIntPipe) serviceId: number,
+    @Param('clientId', ParseIntPipe) clientId: number,
+  ): Promise<ServiceEntity> {
+    return this.clientsService.addServicesToClient(serviceId, clientId);
+  }
+
   //   //! Get File or Image
   //   @Get('/getImage/:name')
   //   getFiles(@Param('name') name, @Res() res) {
@@ -177,4 +198,27 @@ export class ClientsController {
   deleteClientProfile(@Param('id', ParseIntPipe) id: number): Promise<string> {
     return this.clientsService.deleteClientProfile(id);
   }
+
+  //! Remove service from client
+  @Delete('/:clientId/removeService/:serviceId')
+  async removeServiceFromClient(
+    @Param('clientId') clientId: number,
+    @Param('serviceId') serviceId: number,
+  ): Promise<object> {
+    return this.clientsService.removeServiceFromClient(clientId, serviceId);
+  }
+
+
+  //! Email Sending 
+  @Post('/emailSending')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async sendingEmail(@Body() emailDTO: SendMailDTO): Promise<{ success: boolean; message: string }> {
+    try {
+      await this.clientsService.sendingEmail(emailDTO);
+      return { success: true, message: 'Email sent successfully' };
+    } catch (error) {
+      return { success: false, message: 'Failed to send email' };
+    }
+  }
+  
 }
