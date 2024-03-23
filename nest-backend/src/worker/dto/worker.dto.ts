@@ -22,23 +22,23 @@ export class WorkerDTO {
     @IsString()
     password: string;
 
-    @IsNotEmpty()
-    @IsPhoneNumber('BD')
-    phone:string;
+    // @IsNotEmpty()
+    // @IsPhoneNumber('BD')
+    // phone:string;
 
-    @IsNotEmpty()
-    @IsString()
-    address: string;
+    // @IsNotEmpty()
+    // @IsString()
+    // address: string;
 
-    @IsNotEmpty()
-    @IsString()
-    bio: string;
+    // @IsNotEmpty()
+    // @IsString()
+    // bio: string;
 
-    @IsArray()
-    @ArrayNotEmpty()
-    @ArrayUnique()
-    @IsString({each: true})
-    skills: string[];
+    // @IsArray()
+    // @ArrayNotEmpty()
+    // @ArrayUnique()
+    // @IsString({each: true})
+    // skills: string[];
 
     @IsNotEmpty()
     @IsNumber()
@@ -55,4 +55,39 @@ export class loginDTO {
     @IsNotEmpty() 
     password: string;
 
+}
+
+export class updateWorkerDTO {
+    @IsNotEmpty()
+    @IsString()
+    name: string;
+
+    @IsNotEmpty()
+    @IsEmail()
+    email: string;
+
+    // @IsNotEmpty()
+    // @IsPhoneNumber('BD')
+    // phone:string;
+
+    // @IsNotEmpty()
+    // @IsString()
+    // address: string;
+
+    // @IsNotEmpty()
+    // @IsString()
+    // bio: string;
+
+    // @IsArray()
+    // @ArrayNotEmpty()
+    // @ArrayUnique()
+    // @IsString({each: true})
+    // skills: string[];
+
+    @IsNotEmpty()
+    @IsNumber()
+    hourlyRate: number;
+
+    @IsBoolean()
+    availability: boolean;
 }
