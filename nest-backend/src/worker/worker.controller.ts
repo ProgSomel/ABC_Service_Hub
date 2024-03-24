@@ -4,6 +4,8 @@ import { WorkersEntity } from "./worker.entity";
 import { WorkerDTO } from "./dto/worker.dto";
 import { AuthGuard } from "./auth/auth.guard";
 import { ServiceEntity } from "src/service/services.entity";
+import { ReviewEntity } from "src/review/review.entity";
+import { OrderEntity } from "src/order/order.entity";
 
 @UseGuards(AuthGuard)
 @Controller('workers')
@@ -79,34 +81,116 @@ export class WorkersController {
         return this.workersService.updateWorker(id, workerDTO);
     }
 
-    @Get('/:id/services')
+    @Get('available')
+    async getAvailableWorkers(): Promise<WorkerDTO[]>
+    {
+        return this.workersService.getAvailableWorkers();
+    }
+
+
+    @Get('/:id/info')
+    async getWorkerInfo(@Param('id') id: number): Promise<WorkersEntity>
+    {
+        return this.workersService.getWorkerInfo(id);
+    }
+
+    @Get('/:id/allServices')
     async getAllServices(): Promise<ServiceEntity[]> {
         return await this.workersService.getAllServices();
     }
 
-    @Get('/:id/services/:serviceId')
-    async getServiceById(@Param('serviceId') serviceId: number): Promise<ServiceEntity>
+
+
+     @Get('/:id/allServices/:serviceId')
+    async getServiceById(@Param('id') id: number, @Param('serviceId') serviceId: number): Promise<ServiceEntity>
     {
-        const service =  await this.workersService.getServiceById(serviceId);
-
-        if(!service)
-        {
-            throw new NotFoundException('Service with ID ${serviceId} not found!!!!!!!');
-        }
-        return service;
+        return this.workersService.getServiceById(id,serviceId);
     }
+ 
+    // @Get('/:id/allServices/:serviceId')
+    // async getServiceById(@Param('id') id: number, @Param('serviceId') serviceId: number): Promise<ServiceEntity>
+    // {
+    //     return this.workersService.getServiceById(id,serviceId);
+    // }
 
-    @Post('/:id/services/:serviceId')
-    async addServiceToWorker(@Param('id') id: number, @Body('serviceId') serviceId: number): Promise<WorkersEntity>
+
+    @Post('/:id/allServices/:serviceId')
+    async addServiceToWorker(@Param('id') id: number, @Param('serviceId') serviceId: number): Promise<ServiceEntity>
     {
         return this.workersService.addServiceToWorker(id, serviceId);
     }
 
+
+
+    @Get('/:id/services')
+    async getServicesOfWorker(@Param('id') id: number): Promise<ServiceEntity[]>
+    {
+       return this.workersService.getServicesOfWorker(id);
+    }
+
     @Delete('/:id/services/:serviceId')
-    async removeServiceFromWorker(@Param('id') id: number, @Param('serviceId') serviceId: number): Promise<WorkersEntity>
+    async removeServiceFromWorker(@Param('id') id: number, @Param('serviceId') serviceId: number): Promise<void>
     {
         return this.workersService.removeServiceFromWorker(id, serviceId);
+    }   
+
+
+    @Get('/:id/reviews')
+    async getReviewsOfWorker(@Param('id') id: number): Promise<ReviewEntity[]>
+    {
+        return this.workersService.getReviewsOfWorker(id);
     }
+
+ 
+    @Post('/:id/reviews')
+    async addReviewToWorker(@Param('id') id: number, @Body() review: ReviewEntity): Promise<ReviewEntity>
+    {
+        return this.workersService.addReviewToWorker(id, review);
+    }
+
+    //update reviews of worker
+    @Put('/:id/reviews/:reviewId')
+    async updateReviewOfWorker(@Param('id') id: number, @Param('reviewId') reviewId: number, @Body() review: ReviewEntity): Promise<ReviewEntity>
+    {
+        return this.workersService.updateReviewOfWorker(id, reviewId, review);
+    }
+
+
+    @Get('/:id/orders')
+    async getOrdersOfWorker(@Param('id') id: number): Promise<OrderEntity[]>
+    {
+        return this.workersService.getOrdersOfWorker(id);
+    }
+
+
+    @Post('/:id/orders')
+    async addOrderToWorker(@Param('id') id: number, @Body() order: OrderEntity): Promise<OrderEntity>
+    {
+        return this.workersService.addOrderToWorker(id, order);
+    }
+
+
+    @Put('/:id/orders/:orderId')
+    async updateOrderOfWorker(@Param('id') id: number, @Param('orderId') orderId: number, @Body() order: OrderEntity): Promise<OrderEntity>
+    {
+        return this.workersService.updateOrderOfWorker(id, orderId, order);
+    }
+
+
+
+
+
+
+
+    @Post('sendMail')
+
+    async sendMail(): Promise<string> {
+        return this.workersService.sendMail();
+    }
+
+
+
+
 
     
     

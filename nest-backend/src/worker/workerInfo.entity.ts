@@ -12,9 +12,12 @@ export class WorkerInfoEntity {
   
     @Column()
     address: string;
+
+    @Column()
+    phone: string;
   
-    @Column({ type: 'decimal', precision: 10, scale: 2 })
-    hourlyRate: number;
+    // @Column({ type: 'decimal', precision: 10, scale: 2 })
+    // hourlyRate: number;
   
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

@@ -1,7 +1,7 @@
 import { OrderEntity } from "src/order/order.entity";
 import { ReviewEntity } from "src/review/review.entity";
 import { ServiceEntity } from "src/service/services.entity";
-import { BeforeInsert, Column, Entity, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, Column, Entity, JoinTable, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { WorkerInfoEntity } from "./workerInfo.entity";
 
 @Entity("worker")
@@ -13,6 +13,8 @@ export class WorkersEntity {
     @Column()
     name: string;
 
+    @Column()
+    imageUrl: string;
 
     @Column()
     email:string;
@@ -44,6 +46,7 @@ export class WorkersEntity {
     }
 
     @ManyToMany(() => ServiceEntity, service => service.workers)
+    @JoinTable()
     services: ServiceEntity[];
 
     @OneToMany(() => ReviewEntity, review => review.worker)
