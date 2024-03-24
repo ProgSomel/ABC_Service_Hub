@@ -1,8 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity("moderator")  
+@Entity('moderator')
 export class Moderator {
-
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -18,7 +17,7 @@ export class Moderator {
   @Column()
   userName: string;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
 
   @Column()
