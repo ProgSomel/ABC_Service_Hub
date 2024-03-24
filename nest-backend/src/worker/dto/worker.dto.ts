@@ -13,6 +13,10 @@ export class WorkerDTO {
     @IsString()
     name: string;
 
+    @IsNotEmpty()
+    @IsString()
+    imageUrl: string;
+
 
     @IsNotEmpty()
     @IsEmail()

@@ -1,6 +1,6 @@
 import { ClientEntity } from 'src/clients/clients.entity';
 import { WorkersEntity } from 'src/worker/worker.entity';
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 export enum status {
   Active = 'active',
   Inactive = 'inactive',
@@ -32,6 +32,7 @@ export class ServiceEntity {
   clients: ClientEntity[];
 
   @ManyToMany(() => WorkersEntity, (worker) => worker.services)
+
   workers: WorkersEntity[];
 
 }

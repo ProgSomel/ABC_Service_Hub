@@ -15,8 +15,10 @@ export class AuthService {
         private jwtService: JwtService
     ) {}
 
-    async signUp(WorkerData: WorkerDTO): Promise<WorkerDTO> {
-        return await this.workerService.createWorker(WorkerData);
+    async signUp(WorkerData: WorkerDTO,
+        file:Express.Multer.File,
+        ): Promise<WorkerDTO> {
+        return await this.workerService.createWorker(WorkerData, file);
     }
 
     async signIn( loginData:loginDTO): Promise<{ access_token: string }> {
