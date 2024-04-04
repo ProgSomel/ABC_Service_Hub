@@ -3,7 +3,7 @@ import { Inter, Mulish } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/Navbar/page";
 
-
+import Footer from "./components/Footer/page"
  
 const mulish = Mulish({
   weight: '400',
@@ -29,6 +29,7 @@ export default function RootLayout({
         <Navbar></Navbar>
         
         {children}
+        <Footer></Footer>
         </body>
     </html>
   );

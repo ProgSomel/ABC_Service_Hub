@@ -2,7 +2,7 @@ import React from 'react';
 
 const AllServices = () => {
     return (
-        <div>
+        <div className='min-h-screen'>
             <h1>Alll Services</h1>
         </div>
     );
