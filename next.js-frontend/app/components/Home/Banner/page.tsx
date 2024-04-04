@@ -1,9 +1,10 @@
 import React from "react";
 import bannerImg from "../../../../public/images/bannner.jpg";
+import Link from "next/link";
 
 const Banner = () => {
   return (
-    <div className="relative bg-cover bg-center h-96" style={{backgroundImage: `url(${bannerImg.src})`}}>
+    <div className="relative min-h-screen bg-cover bg-center h-96" style={{backgroundImage: `url(${bannerImg.src})`}}>
       {/* Content */}
       <div className="absolute inset-0 bg-black opacity-40"></div>
       <div className="absolute inset-0 flex items-center justify-center">
@@ -17,9 +18,11 @@ const Banner = () => {
           </p>
 
           {/* Button */}
+          <Link href="/allServices">
           <button className="bg-[#E5C287] hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full mb-6">
             See All Services
           </button>
+          </Link>
 
           {/* Search Input */}
           <div className="max-w-md mx-auto mb-6">
