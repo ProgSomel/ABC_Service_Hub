@@ -1,4 +1,5 @@
-import Banner from "./components/Home/Banner/page";
+import Image from "next/image";
+import Banner from "./Pages/Home/Banner/page";
 
 export default function Home() {
   return (

@@ -1,7 +1,47 @@
+"use client";
+
+import axios from "axios";
 import Link from "next/link";
 import React from "react";
 
 const Register = () => {
+  async function createUser(userData) {
+    console.log(userData.firstName);
+    try {
+      const data = {
+              firstName: userData.firstName,
+              lastName: userData.lastName
+            };
+        
+      const response = await axios.post(
+        'http://localhost:3000/clients/clientRegistration',
+        data
+      );
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const handleRegistration = (e) => {
+    e.preventDefault();
+    const firstName = e.target.firstName.value;
+    const lastName = e.target.lastName.value;
+    const email = e.target.email.value;
+    const userName = e.target.userName.value;
+    const password = e.target.password.value;
+    const confirmPassword = e.target.confirmPassword.value;
+    const userData = {
+      firstName,
+      lastName,
+      email,
+      userName,
+      password,
+      confirmPassword,
+    };
+
+    createUser(userData);
+  };
   return (
     <div>
       <div className="min-h-screen flex flex-col lg:flex-row justify-center items-stretch bg-gray-100 py-8 px-4 lg:px-0">
@@ -20,7 +60,10 @@ const Register = () => {
           <h2 className="text-3xl mb-6 text-center font-semibold text-gray-800">
             Sign Up
           </h2>
-          <form className="flex flex-col justify-between flex-grow">
+          <form
+            onSubmit={handleRegistration}
+            className="flex flex-col justify-between flex-grow"
+          >
             <div className="flex flex-wrap -mx-4 mb-4">
               {/* First Name */}
               <div className="w-full lg:w-1/2 px-2 mb-4 lg:mb-0">
@@ -52,7 +95,7 @@ const Register = () => {
             </div>
 
             {/* Email */}
-            <div className="mb-4">
+            <div className="my-4">
               <label className="block mb-1 font-medium text-gray-800">
                 Email
               </label>
@@ -72,7 +115,7 @@ const Register = () => {
               </label>
               <input
                 type="text"
-                name="username"
+                name="userName"
                 placeholder="Enter your username"
                 className="w-full border border-gray-300 rounded-md py-3 px-4 placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring focus:ring-purple-500"
                 required
@@ -89,7 +132,6 @@ const Register = () => {
                 name="profileImage"
                 accept="image/*"
                 className="w-full border border-gray-300 rounded-md py-3 px-4 placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring focus:ring-purple-500"
-                required
               />
             </div>
 
@@ -124,12 +166,12 @@ const Register = () => {
               {/* Repeat Password */}
               <div className="w-full lg:w-1/2 px-2">
                 <label className="block mb-1 font-medium text-gray-800">
-                  Repeat Password
+                  Confirm Password
                 </label>
                 <input
                   type="password"
-                  name="repeatPassword"
-                  placeholder="Repeat your password"
+                  name="confirmPassword"
+                  placeholder="Confirm your password"
                   className="w-full border border-gray-300 rounded-md py-3 px-4 placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring focus:ring-purple-500"
                   required
                 />
@@ -153,17 +195,14 @@ const Register = () => {
             >
               Sign Up
             </button>
-
-            {/* Sign In Link */}
-            <div className="text-center mt-4">
-              <span className="text-gray-800">Already have an account?</span>{" "}
-              <Link href="/login">
-                <p  className="text-purple-600 hover:underline">
-                  Sign In
-                </p>
-              </Link>
-            </div>
           </form>
+          {/* Sign In Link */}
+          <div className="text-center mt-4">
+            <span className="text-gray-800">Already have an account?</span>{" "}
+            <Link href="/login">
+              <p className="text-purple-600 hover:underline">Sign In</p>
+            </Link>
+          </div>
         </div>
       </div>
     </div>

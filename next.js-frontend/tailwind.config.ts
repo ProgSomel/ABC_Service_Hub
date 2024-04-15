@@ -13,8 +13,18 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      colors: {
+        // Define your light theme colors here
+        // For example:
+        light: {
+          primary: "#FFFFFF", // white
+          secondary: "#E5E7EB", // light gray
+          // Add more colors as needed
+        },
+      },
     },
   },
-  plugins: [],
+  plugins: [require("daisyui")],
 };
+
 export default config;
