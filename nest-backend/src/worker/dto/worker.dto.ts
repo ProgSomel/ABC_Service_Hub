@@ -95,3 +95,4 @@ export class updateWorkerDTO {
     @IsBoolean()
     availability: boolean;
 }
+
