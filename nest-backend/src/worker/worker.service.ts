@@ -9,6 +9,8 @@ import { MailerService } from "@nestjs-modules/mailer";
 import { ReviewEntity } from "src/review/review.entity";
 import { OrderEntity } from "src/order/order.entity";
 import { WorkerInfoEntity } from "./workerInfo.entity";
+import { WorkerRegistrationDTO } from "./dto/workerRegistration.dto";
+//import { WorkeRegistrationDTO } from "./dto/workerRegistration.dto";
 
 
 
@@ -60,25 +62,17 @@ export class WorkersService {
     //   } 
     // } 
 
-    async createWorker(workerDTO: WorkerDTO,
+    async createWorker(
+      WorkerRegistrationDTO: WorkerRegistrationDTO,
       file:Express.Multer.File,
       ): Promise<WorkersEntity> {
         const worker = new WorkersEntity();
-        worker.id = workerDTO.id;
-        worker.name = workerDTO.name;
-        worker.email = workerDTO.email;
-        worker.password = workerDTO.password;
-        worker.imageUrl = workerDTO.imageUrl;
-        // worker.phone = workerDTO.phone;
-        // worker.address = workerDTO.address;
-        // worker.bio = workerDTO.bio;
-       // worker.skills = workerDTO.skills;
-        worker.hourlyRate = workerDTO.hourlyRate;
-        worker.availability = workerDTO.availability;
 
-     
-        return await this.workerRepository.save(worker);
+        WorkerRegistrationDTO.imageUrl = file?.filename;
+
+        return await this.workerRepository.save(WorkerRegistrationDTO);
       }
+
 
     async getAllWorkers(): Promise<WorkersEntity[]> {
         const workers = await this.workerRepository.find();
@@ -288,8 +282,8 @@ export class WorkersService {
 //////////////////////////////////////////////////////////////////////
 
 
-      async findOneBy( logindata:loginDTO): Promise<any> {
-        return await this.workerRepository.findOneBy({email:logindata.email});
+      async findOneBy( loginData:loginDTO): Promise<any> {
+        return await this.workerRepository.findOneBy({email:loginData.email});
       }
 
 }

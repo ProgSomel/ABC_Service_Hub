@@ -11,9 +11,9 @@ const Login = () => {
     </div>
 
     {/* Right Div with Form */}
-    <div className=" bg-white p-8 rounded shadow-md w-full max-w-md  lg:mr-0 lg:w-1/2 flex flex-col justify-between">
-      <h2 className="text-3xl mb-6 text-center font-semibold text-gray-800">Sign In</h2>
-      <form className="flex flex-col justify-between flex-grow">
+    <div className=" bg-white p-8 rounded shadow-md w-full max-w-md  lg:mr-0 lg:w-1/2 flex-col justify-between">
+      <h2 className="text-3xl  text-center font-semibold text-gray-800">Sign In</h2>
+      <form className="flex flex-col flex-grow mt-">
         <div className="mb-4">
           <label className="block mb-1 font-medium text-gray-800">Email</label>
           <input
