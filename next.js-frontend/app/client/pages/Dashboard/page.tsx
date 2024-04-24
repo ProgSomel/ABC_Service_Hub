@@ -22,12 +22,11 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
-  const handleGetClientById = async (e) => {
+  const handleGetClientById = async (e:any) => {
     e.preventDefault();
     const form = e.target;
 
     const id = parseInt(form.id.value);
-    console.log(typeof id);
 
     try {
       const response = await axios.get(`http://localhost:3000/clients/${id}`);
@@ -47,32 +46,36 @@ const Dashboard = () => {
   };
 
 
-  const handleClientDelete = async(id:any) => {
-    console.log(id);
+  const handleClientDelete = async (id:any) => {
     try {
-      const response = await axios.delete(`http://localhost:3000/clients/${id}/deleteProfile`)
-      
-      console.log(response.data)
-
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: `id ${id} is deleted Successfully`,
-        showConfirmButton: false,
-        timer: 1500
+      const result = await Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!"
       });
-
-      const remaining = clients.filter((client:any) => client.id!== id)
-      setClients(remaining)
-    }
-    catch(err) {
+  
+      if (result.isConfirmed) {
+        const response = await axios.delete(`http://localhost:3000/clients/${id}/deleteProfile`);
+  
+        Swal.fire({
+          title: "Deleted!",
+          text: "Your file has been deleted.",
+          icon: "success"
+        });
+  
+        const remaining = clients.filter((client) => client?.id !== id);
+        setClients(remaining);
+      }
+    } catch (err:any) {
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: err.message,
-        
+        text: err?.message
       });
-
     }
   };
 
@@ -87,7 +90,7 @@ const Dashboard = () => {
           name="id"
           placeholder="Enter Client ID to Search"
           className="w-full border border-gray-300 rounded-md py-3 px-4 placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring focus:ring-purple-500"
-          required
+          
         />
         <div className="flex justify-center mt-5">
           <button
@@ -100,7 +103,7 @@ const Dashboard = () => {
       </form>
       <div className=" grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-5 max-w-6xl mx-auto my-12 px-4 md:px-2 lg:px-2">
       {searchedClient ? (
-          <div className="card  bg-neutral text-neutral-content">
+          <div className="card h-[300px]  bg-neutral text-neutral-content">
           <div className="card-body items-center text-center">
             <h2 className="card-title">
               {searchedClient?.firstName} {searchedClient?.lastName}

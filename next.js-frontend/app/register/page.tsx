@@ -3,19 +3,29 @@
 import axios from "axios";
 import Link from "next/link";
 import React from "react";
+import Swal from 'sweetalert2'
 
 const Register = () => {
   
 
-  const handleRegistration = async (e:any) => {
+  const handleRegistration = async(e:any) => {
     e.preventDefault();
     try {
-      const firstName = e.target.firstName.value;
-      const lastName = e.target.lastName.value;
-      const email = e.target.email.value;
-      const userName = e.target.userName.value;
-      const password = e.target.password.value;
-      const confirmPassword = e.target.confirmPassword.value;
+      const form = e.target
+      
+
+      const firstName = form.firstName.value;
+
+      const lastName = form.lastName.value;
+
+      const email = form.email.value;
+
+      const userName = form.userName.value;
+
+      const password = form.password.value;
+
+      const confirmPassword = form.confirmPassword.value;
+
       
       const formData = new FormData();
       formData.append("firstName", firstName);
@@ -24,7 +34,6 @@ const Register = () => {
       formData.append("userName", userName);
       formData.append("password", password);
       formData.append("confirmPassword", confirmPassword);
-      console.log(formData);
 
       const response = await axios.post('http://localhost:3000/clients/clientRegistration', formData, {
          headers: {
@@ -32,8 +41,16 @@ const Register = () => {
            }
         
       })
-      const data = response.data;
-      console.log(data);
+      if(response.statusText === "Created") {
+        Swal.fire({
+          icon: "success",
+          title: "Success",
+          text: "User Registered Successfully",
+          
+        });
+        form.reset();
+
+      }
 
     } catch(err) {
       console.log(err);
@@ -143,6 +160,11 @@ const Register = () => {
                 className="w-full border border-gray-300 rounded-md py-3 px-4 placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring focus:ring-purple-500"
                 required
               ></textarea>
+            </div>
+
+            {/* file  */}
+            <div className="my-5">
+              <input type="file" name="profilePicture" />
             </div>
 
             <div className="flex flex-wrap -mx-4 mb-4">
