@@ -12,7 +12,6 @@
     "axios": "^1.6.8",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.4",
-  
   },
   "devDependencies": {
     "@types/node": "^20",
