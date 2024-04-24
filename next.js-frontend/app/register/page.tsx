@@ -3,44 +3,58 @@
 import axios from "axios";
 import Link from "next/link";
 import React from "react";
+import Swal from 'sweetalert2'
 
 const Register = () => {
-  async function createUser(userData) {
-    console.log(userData.firstName);
-    try {
-      const data = {
-              firstName: userData.firstName,
-              lastName: userData.lastName
-            };
-        
-      const response = await axios.post(
-        'http://localhost:3000/clients/clientRegistration',
-        data
-      );
-      console.log(response);
-    } catch (error) {
-      console.error(error);
-    }
-  }
+  
 
-  const handleRegistration = (e) => {
+  const handleRegistration = async(e:any) => {
     e.preventDefault();
-    const firstName = e.target.firstName.value;
-    const lastName = e.target.lastName.value;
-    const email = e.target.email.value;
-    const userName = e.target.userName.value;
-    const password = e.target.password.value;
-    const confirmPassword = e.target.confirmPassword.value;
-    const userData = {
-      firstName,
-      lastName,
-      email,
-      userName,
-      password,
-      confirmPassword,
-    };
+    try {
+      const form = e.target
+      
 
-    createUser(userData);
+      const firstName = form.firstName.value;
+
+      const lastName = form.lastName.value;
+
+      const email = form.email.value;
+
+      const userName = form.userName.value;
+
+      const password = form.password.value;
+
+      const confirmPassword = form.confirmPassword.value;
+
+      
+      const formData = new FormData();
+      formData.append("firstName", firstName);
+      formData.append("lastName", lastName);
+      formData.append("email", email);
+      formData.append("userName", userName);
+      formData.append("password", password);
+      formData.append("confirmPassword", confirmPassword);
+
+      const response = await axios.post('http://localhost:3000/clients/clientRegistration', formData, {
+         headers: {
+           'Content-Type': 'multipart/form-data'
+           }
+        
+      })
+      if(response.statusText === "Created") {
+        Swal.fire({
+          icon: "success",
+          title: "Success",
+          text: "User Registered Successfully",
+          
+        });
+        form.reset();
+
+      }
+
+    } catch(err) {
+      console.log(err);
+    }
   };
   return (
     <div>
@@ -48,7 +62,7 @@ const Register = () => {
         {/* Left Div with Image */}
         <div className="lg:flex justify-center items-center relative w-full lg:w-1/2">
           <img
-            src="{registrationImag}"
+            src=""
             alt="Registration"
             className="object-cover h-full w-full"
           />
@@ -111,7 +125,7 @@ const Register = () => {
             {/* Username */}
             <div className="mb-4">
               <label className="block mb-1 font-medium text-gray-800">
-                Username
+                User Name
               </label>
               <input
                 type="text"
@@ -122,7 +136,7 @@ const Register = () => {
               />
             </div>
 
-            {/* Profile Image */}
+            {/* Profile Image
             <div className="mb-4">
               <label className="block mb-1 font-medium text-gray-800">
                 Profile Image
@@ -133,7 +147,7 @@ const Register = () => {
                 accept="image/*"
                 className="w-full border border-gray-300 rounded-md py-3 px-4 placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring focus:ring-purple-500"
               />
-            </div>
+            </div> */}
 
             {/* Address */}
             <div className="mb-4">
@@ -146,6 +160,11 @@ const Register = () => {
                 className="w-full border border-gray-300 rounded-md py-3 px-4 placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring focus:ring-purple-500"
                 required
               ></textarea>
+            </div>
+
+            {/* file  */}
+            <div className="my-5">
+              <input type="file" name="profilePicture" />
             </div>
 
             <div className="flex flex-wrap -mx-4 mb-4">
