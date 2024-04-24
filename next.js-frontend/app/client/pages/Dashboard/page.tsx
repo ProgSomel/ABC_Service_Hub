@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from "react";
 import Swal from 'sweetalert2';
 import axios from 'axios'; 
+import Link from "next/link";
+
 
 
 const Dashboard = () => {
@@ -127,6 +129,18 @@ const Dashboard = () => {
                 {client?.firstName} {client?.lastName}
               </h2>
               <p className="font-bold text-2xl">{client?.email}</p>
+
+              <div className="card-actions w-full  mt-5">
+               <Link href={`/client/ClientProfile/${client?.id}`} className="w-full">
+               <button
+                  
+                  className="btn bg-blue-300 btn-primary w-full  text-white"
+                >
+                  Go to Profile
+                </button>
+               </Link>
+              </div>
+
               <div className="card-actions w-full  mt-5">
                 <button
                   onClick={() => handleClientDelete(client?.id)}

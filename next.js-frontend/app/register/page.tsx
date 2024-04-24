@@ -52,8 +52,13 @@ const Register = () => {
 
       }
 
-    } catch(err) {
-      console.log(err);
+    } catch(err:any) {
+      Swal.fire({
+        icon: "error",
+        title: "Opss....",
+        text: err.message,
+        
+      });
     }
   };
   return (
