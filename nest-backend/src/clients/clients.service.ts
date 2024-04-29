@@ -8,11 +8,12 @@ import { MoreThan, Repository } from 'typeorm';
 import { ContactInfoEntity } from './contact-info.entity';
 import { ClientEntity } from 'src/clients/clients.entity';
 import { OrderEntity } from 'src/order/order.entity';
-import { ServiceEntity } from 'src/service/services.entity';
+
 import { JwtService } from '@nestjs/jwt';
 import { ClientLoginDTO } from './dto/clientLoginDTO';
 import { MailerService } from '@nestjs-modules/mailer';
 import { SendMailDTO } from './dto/mailDTO';
+import { ServiceEntity } from 'src/service/services.entity';
 
 @Injectable()
 export class ClientsService {
@@ -26,7 +27,7 @@ export class ClientsService {
     @InjectRepository(ServiceEntity)
     private serviceRepository: Repository<ServiceEntity>,
     private jwtService: JwtService,
-    private readonly mailerService: MailerService
+    private readonly mailerService: MailerService,
   ) {}
   // private clients: Client[] = [];
 
@@ -146,7 +147,7 @@ export class ClientsService {
     clientRegistrationDTO: ClientRegistrationDTO,
     file: Express.Multer.File,
   ): Promise<ClientEntity> {
-    clientRegistrationDTO.profilePicture = file?.filename;
+    clientRegistrationDTO.profilePicture = file?.filename || "";
     return this.userRepository.save(clientRegistrationDTO);
   }
 
@@ -178,17 +179,12 @@ export class ClientsService {
     }
   }
 
-  // clientLogin(email: string, password: string): Client {
-  //   return this.clients.find(
-  //     (client) => client.email === email && client.password === password,
-  //   );
-  //   // if(client) {
-  //   // return client;
-  //   // }
-  //   // else {
-  //   //   return "Error! User Not Found";
-  //   // }
-  // }
+  async clientLogin(email: string, password: string): Promise<ClientEntity> {
+    const client = await this.userRepository.findOne({ where: { email, password } });
+    if (client) {
+      return client;
+    } 
+  }
 
   // updateClientProfile(
   //   id: string,
@@ -274,13 +270,15 @@ export class ClientsService {
   ): Promise<object> {
     const service = await this.serviceRepository.findOne({
       where: { serviceId: serviceId },
-      relations: ['clients']
-  });
+      relations: ['clients'],
+    });
     const client = await this.getClientById(clientId);
     if (service && client) {
       service.clients = service.clients.filter((c) => c.id !== client.id);
       await this.serviceRepository.save(service);
-      return {Message:`Service ${serviceId} is Deleted from the Client ${clientId}`}
+      return {
+        Message: `Service ${serviceId} is Deleted from the Client ${clientId}`,
+      };
     }
   }
 
@@ -300,19 +298,20 @@ export class ClientsService {
     }
   }
 
-  async findOne( clientLoginData:ClientLoginDTO): Promise<any> {
-    return await this.userRepository.findOneBy({email:clientLoginData.email});
+  async findOne(clientLoginData: ClientLoginDTO): Promise<any> {
+    return await this.userRepository.findOneBy({
+      email: clientLoginData.email,
+    });
   }
 
-  //! Sen Mail 
+  //! Sen Mail
   async sendingEmail(emailDTO: SendMailDTO) {
     const { recipient, subject, text } = emailDTO;
     const mail = await this.mailerService.sendMail({
-        to: recipient,
-        subject: subject,
-        text: text,
+      to: recipient,
+      subject: subject,
+      text: text,
     });
     console.log(mail);
-}
-
+  }
 }

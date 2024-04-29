@@ -27,6 +27,7 @@ export class ClientAuthService {
     if (!user) {
       throw new UnauthorizedException();
     }
+    console.log('User:', user);
     const isMatch = await bcrypt.compare(clientLogindata.password, user.password);
     if (!isMatch) {
       throw new UnauthorizedException();

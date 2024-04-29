@@ -1,12 +1,9 @@
-import { Body, Controller, Post, UploadedFile, UseInterceptors, UsePipes, ValidationPipe } from "@nestjs/common";
+import { Body, Controller, Post, UploadedFile, UseInterceptors, ValidationPipe } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { MulterError, diskStorage } from "multer";
 import { WorkerDTO, loginDTO } from "../dto/worker.dto";
 import * as bcrypt from 'bcrypt';
-import { WorkersEntity } from "../worker.entity";
-import { workerData } from "worker_threads";
-import { WorkerRegistrationDTO } from "../dto/workerRegistration.dto";
 
 
 @Controller('auth')
@@ -42,86 +39,12 @@ export class AuthController {
     // }
 
     @Post('register')
-    @UseInterceptors(
-        FileInterceptor('profilePicture', {
-          fileFilter(req, profilePicture, cb) {
-            if (
-              profilePicture.originalname.match(
-                /^.*\.(jpg|webp|png|jpeg|JPG|WEBP|PNG|JPEG)$/,
-              )
-            )
-              cb(null, true);
-            else {
-              cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
-            }
-          },
-          // limits: { fileSize: 30000 },
-          storage: diskStorage({
-            destination: './uploads',
-            filename: function (req, profilePicture, cb) {
-              cb(null, profilePicture.originalname);
-            },
-          }),
-        }),
-      )
-    @UsePipes(ValidationPipe)
-    async signUp(
-      @Body() WorkerRegistrationDTO: WorkerRegistrationDTO,
-      @UploadedFile() myFile: Express.Multer.File,
-    ) : Promise<WorkerRegistrationDTO> {
+    async createWorker(@Body() WorkerData: WorkerDTO) : Promise<WorkerDTO> {
         const salt = await bcrypt.genSalt();
-        const hashedPassword = await bcrypt.hash(WorkerRegistrationDTO.password, salt);
-        
-        WorkerRegistrationDTO.password = hashedPassword;
-
-        WorkerRegistrationDTO.imageUrl = myFile.filename;
-        // return this.authService.signUp(workerData, profilePicture,);
-        return this.authService.signUp(WorkerRegistrationDTO, myFile,);
+        const hashedPassword = await bcrypt.hash(WorkerData.password, salt);
+        WorkerData.password = hashedPassword;
+        return this.authService.signUp(WorkerData);
     }
-//     @Controller('clientAuth')
-// export class ClientAuthController {
-//     constructor(private clientAuthService: ClientAuthService){}
-//     @Post('/register')
-//     @UseInterceptors(
-//         FileInterceptor('profilePicture', {
-//           fileFilter(req, profilePicture, cb) {
-//             if (
-//               profilePicture.originalname.match(
-//                 /^.*\.(jpg|webp|png|jpeg|JPG|WEBP|PNG|JPEG)$/,
-//               )
-//             )
-//               cb(null, true);
-//             else {
-//               cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
-//             }
-//           },
-//           // limits: { fileSize: 30000 },
-//           storage: diskStorage({
-//             destination: './uploads',
-//             filename: function (req, profilePicture, cb) {
-//               cb(null, profilePicture.originalname);
-//             },
-//           }),
-//         }),
-//       )
-//       @UsePipes(ValidationPipe)
-//       async signUp(
-//         @Body() clientRegistrationDTO: ClientRegistrationDTO,
-//         @UploadedFile() myFile: Express.Multer.File,
-//       ): Promise<ClientEntity> {
-        
-//         const salt = await bcrypt.genSalt();
-//         const hashedPassword = await bcrypt.hash(clientRegistrationDTO.password, salt);
-
-//         clientRegistrationDTO.password = hashedPassword;
-
-//         clientRegistrationDTO.profilePicture = myFile.filename;
-    
-//         return this.clientAuthService.signUp(
-//           clientRegistrationDTO,
-//           myFile,
-//         );
-//       }
 
     @Post('login')
     signIn(@Body() loginData: loginDTO) {

@@ -11,7 +11,9 @@ import {
   ValidationPipe,
   UseInterceptors,
   UploadedFile,
-  UseGuards,
+  Res,
+  Query,
+  // UseGuards,
 
   // ParseEnumPipe,
   // Res,
@@ -27,7 +29,7 @@ import { ContactInfoEntity } from './contact-info.entity';
 import { Body } from '@nestjs/common';
 import { OrderEntity } from 'src/order/order.entity';
 import { ServiceEntity } from 'src/service/services.entity';
-import { ClientAuthGuard } from './client-auth/client-auth.guard';
+// import { ClientAuthGuard } from './client-auth/client-auth.guard';
 import { SendMailDTO } from './dto/mailDTO';
 
 @Controller('clients')
@@ -36,7 +38,7 @@ export class ClientsController {
 
   //   //! Get All CLients
   @Get()
-  @UseGuards(ClientAuthGuard)
+  // @UseGuards(ClientAuthGuard)
   getAllClients(): Promise<ClientEntity[]> {
     return this.clientsService.getAllClients();
   }
@@ -80,13 +82,13 @@ export class ClientsController {
   //   }
 
   // //! Client Login
-  // @Get('/clientLogin')
-  // clientLogin(
-  //   @Query('email') email: string,
-  //   @Query('password') password: string,
-  // ): Client {
-  //   //return this.clientsService.clientLogin(email, password);
-  // }
+  @Post('/clientLogin')
+  async clientLogin(
+    @Query('email') email: string,
+    @Query('password') password: string,
+  ): Promise<ClientEntity> {
+    return this.clientsService.clientLogin(email, password);
+  }
 
   //! Get OrdersBy ClientId
   @Get('/getOrders/:clientId')
@@ -100,6 +102,12 @@ export class ClientsController {
   @Get('/servicesAndClients')
   async getServicesWithClients(): Promise<ServiceEntity[]> {
     return this.clientsService.getServicesWithClients();
+  }
+
+  //! Get File
+  @Get('/getimage/:name')
+  getImages(@Param('name') name: string, @Res() res) {
+    res.sendFile(name, { root: './uploads' });
   }
 
   //   //! Client Registration
@@ -131,7 +139,7 @@ export class ClientsController {
     @Body() clientRegistrationDTO: ClientRegistrationDTO,
     @UploadedFile() myFile: Express.Multer.File,
   ): Promise<ClientEntity> {
-    clientRegistrationDTO.profilePicture = myFile.filename;
+    clientRegistrationDTO.profilePicture = myFile?.filename || '';
 
     return this.clientsService.clientRegistration(
       clientRegistrationDTO,
@@ -208,11 +216,12 @@ export class ClientsController {
     return this.clientsService.removeServiceFromClient(clientId, serviceId);
   }
 
-
-  //! Email Sending 
+  //! Email Sending
   @Post('/emailSending')
   @UsePipes(new ValidationPipe({ transform: true }))
-  async sendingEmail(@Body() emailDTO: SendMailDTO): Promise<{ success: boolean; message: string }> {
+  async sendingEmail(
+    @Body() emailDTO: SendMailDTO,
+  ): Promise<{ success: boolean; message: string }> {
     try {
       await this.clientsService.sendingEmail(emailDTO);
       return { success: true, message: 'Email sent successfully' };
@@ -220,5 +229,4 @@ export class ClientsController {
       return { success: false, message: 'Failed to send email' };
     }
   }
-  
 }
