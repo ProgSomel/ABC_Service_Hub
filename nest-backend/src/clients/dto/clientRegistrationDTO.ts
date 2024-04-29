@@ -2,6 +2,7 @@ import {
   IsAlpha,
   IsDateString,
   IsNotEmpty,
+  IsOptional,
   IsString,
   IsUrl,
   Length,
@@ -30,12 +31,12 @@ export class ClientRegistrationDTO {
 
   //! Full Name
   @IsAlpha()
-  @IsNotEmpty()
   @IsString({
-    message: '!Error, Invalid type for Last Name...Last Name Must Be String',
+    message: '!Error, Invalid type for Full Name...Full Name Must Be String',
   })
-  @Matches(/^[^0-9]*$/, { message: 'Name must not contain any numbers' })
-  fullName: string;
+  @Matches(/^[^0-9]*$/, { message: 'Full Name must not contain any numbers' })
+  @IsOptional()
+  fullName?: string;
 
   //! User Name
   @IsAlpha()
@@ -75,10 +76,12 @@ export class ClientRegistrationDTO {
   status: status;
 
   //! Profile Picture
+  @IsOptional()
   profilePicture?: string;
 
   //! Phone Number
   @Length(1, 11, { message: 'Phone number must not be longer than 11 digits' })
+  @IsOptional()
   phoneNumber?: string;
 
   //! Address
@@ -86,10 +89,12 @@ export class ClientRegistrationDTO {
 
   //! URL
   @IsUrl()
+  @IsOptional()
   fbLinks?: string;
 
   // @Matches(/^(\d{2})-(\d{2})-(\d{4})$/, {message:"Invalid Date Format"})
   //! Date of Birth
   @IsDateString()
+  @IsOptional()
   dateOfBirth?: Date;
 }

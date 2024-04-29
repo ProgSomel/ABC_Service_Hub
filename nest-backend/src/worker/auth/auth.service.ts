@@ -3,8 +3,7 @@ import { JwtService } from "@nestjs/jwt";
 import { WorkersService } from "src/worker/worker.service";
 import { WorkerDTO, loginDTO } from "../dto/worker.dto";
 import * as bcrypt from 'bcrypt';
-import { WorkerRegistrationDTO } from "../dto/workerRegistration.dto";
-import { log } from "console";
+import { Repository } from "typeorm";
 import { WorkersEntity } from "../worker.entity";
 
 
@@ -16,10 +15,8 @@ export class AuthService {
         private jwtService: JwtService
     ) {}
 
-    async signUp(WorkerRegistrationDTO: WorkerRegistrationDTO,
-        file:Express.Multer.File,
-        ): Promise<WorkersEntity> {
-        return await this.workerService.createWorker(WorkerRegistrationDTO, file);
+    async signUp(WorkerData: WorkerDTO): Promise<WorkerDTO> {
+        return await this.workerService.createWorker(WorkerData);
     }
 
     async signIn( loginData:loginDTO): Promise<{ access_token: string }> {
@@ -29,12 +26,11 @@ export class AuthService {
     }
     const isMatch = await bcrypt.compare(loginData.password, user.password);
     if (!isMatch) {
-        throw new UnauthorizedException(loginData.password + " " + user.password);
-
+          throw new UnauthorizedException();
     }
     const payload = loginData;
     return {
           access_token: await this.jwtService.signAsync(payload),
     };
-    }
+      }
 }
