@@ -3,16 +3,13 @@
 import axios from "axios";
 import Link from "next/link";
 import React from "react";
-import Swal from 'sweetalert2'
+import Swal from "sweetalert2";
 
 const Register = () => {
-  
-
-  const handleRegistration = async(e:any) => {
+  const handleRegistration = async (e: any) => {
     e.preventDefault();
     try {
-      const form = e.target
-      
+      const form = e.target;
 
       const firstName = form.firstName.value;
 
@@ -26,7 +23,6 @@ const Register = () => {
 
       const confirmPassword = form.confirmPassword.value;
 
-      
       const formData = new FormData();
       formData.append("firstName", firstName);
       formData.append("lastName", lastName);
@@ -35,29 +31,37 @@ const Register = () => {
       formData.append("password", password);
       formData.append("confirmPassword", confirmPassword);
 
-      const response = await axios.post('http://localhost:3000/clients/clientRegistration', formData, {
-         headers: {
-           'Content-Type': 'multipart/form-data'
-           }
-        
-      })
-      if(response.statusText === "Created") {
+      // Get the file input element
+    const profilePictureInput = form.querySelector('input[name="profilePicture"]');
+    // Check if a file is selected
+    if (profilePictureInput && profilePictureInput.files.length > 0) {
+      const profilePicture = profilePictureInput.files[0];
+      formData.append("profilePicture", profilePicture);
+    }
+
+      const response = await axios.post(
+        "http://localhost:3000/clientAuth/register",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log(response);
+      if (response.statusText === "Created") {
         Swal.fire({
           icon: "success",
           title: "Success",
           text: "User Registered Successfully",
-          
         });
         form.reset();
-
       }
-
-    } catch(err:any) {
+    } catch (err: any) {
       Swal.fire({
         icon: "error",
         title: "Opss....",
         text: err.message,
-        
       });
     }
   };

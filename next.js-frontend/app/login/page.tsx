@@ -1,41 +1,45 @@
 "use client";
+
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { useRouter } from "next/navigation";
 
 const Login = () => {
-
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const router = useRouter();
+  
 
   const handleLogin = async (e: any) => {
     e.preventDefault();
     try {
-      const form = e.target;
-      const email = form.email.value;
-      const password = form.password.value;
-
-      const formData = new FormData();
-      formData.append("email", email);
-      formData.append("password", password);
-
       const response = await axios.post(
-        "http://localhost:3000/clients/clientLogin",
-        formData,
+        "http://localhost:3000/clientAuth/clientLogin",
+        { email, password }, // Send data as JSON object
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "application/json", // Set content type to application/json
           },
         }
       );
-      if (response.statusText === "Created") {
-        Swal.fire({
-          icon: "success",
-          title: "Success",
-          text: "User Logged In Successfully",
-        });
+      console.log(response);
+      console.log(response.data.access_token);
+      const token = response.data;
+      localStorage.setItem("token", token.access_token);
+      localStorage.setItem("email", email);
 
-        window.location.href = "/";
-      }
+      Swal.fire({
+        icon: "success",
+        title: "Success",
+        text: "User Logged In Successfully",
+      });
+      // router.push(`/client/ClientProfile/${email}`)
+      // router.push("/");
+      window.location.href = "/";
+
+      // window.location.reload();
     } catch (err: any) {
       console.log(err);
       Swal.fire({
@@ -54,45 +58,9 @@ const Login = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-indigo-600 opacity-75"></div>
       </div>
 
-<<<<<<< HEAD
       {/* Right Div with Form */}
       <div className=" bg-white p-8 rounded shadow-md w-full max-w-md  lg:mr-0 lg:w-1/2 flex flex-col justify-between">
         <h2 className="text-3xl mb-6 text-center font-semibold text-gray-800">
-=======
-    {/* Right Div with Form */}
-
-    <div className=" bg-white p-8 rounded shadow-md w-full max-w-md  lg:mr-0 lg:w-1/2 flex flex-col justify-between">
-      <h2 className="text-3xl mb-6 text-center font-semibold text-gray-800">Sign In</h2>
-      <form onSubmit={handleLogin} className="flex flex-col justify-between flex-grow">
-
-        <div className="mb-4">
-          <label className="block mb-1 font-medium text-gray-800">Email</label>
-          <input
-            type="email"
-            name="email"
-            placeholder="Enter your email"
-            className="w-full border border-gray-300 rounded-md py-3 px-4 placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring focus:ring-purple-500"
-            required
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block mb-1 font-medium text-gray-800">Password</label>
-          <input
-            type="password"
-            name="password"
-            placeholder="Enter your password"
-            className="w-full border border-gray-300 rounded-md py-3 px-4 placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring focus:ring-purple-500"
-            required
-          />
-        </div>
-
-        {/* Sign In Button */}
-        <button
-          type="submit"
-          className="w-full bg-purple-600 text-white py-3 px-6 rounded-md hover:bg-purple-700 transition duration-300"
-        >
->>>>>>> 1574ac9079959e099eb6417a9423bbc413c31345
           Sign In
         </h2>
         <form
@@ -108,6 +76,8 @@ const Login = () => {
               name="email"
               placeholder="Enter your email"
               className="w-full border border-gray-300 rounded-md py-3 px-4 placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring focus:ring-purple-500"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
@@ -121,6 +91,8 @@ const Login = () => {
               name="password"
               placeholder="Enter your password"
               className="w-full border border-gray-300 rounded-md py-3 px-4 placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring focus:ring-purple-500"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
