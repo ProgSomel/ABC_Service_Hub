@@ -1,44 +1,86 @@
 "use client";
+import { FaEye } from "react-icons/fa";
+import { FaEyeSlash } from "react-icons/fa";
 
 import axios from "axios";
 import Link from "next/link";
 import React from "react";
+import toast from "react-hot-toast";
 import Swal from "sweetalert2";
+import  { useState } from "react";
 
 const Register = () => {
+  const [showPassword, setShowPassword] = useState(false);
   const handleRegistration = async (e: any) => {
     e.preventDefault();
+    
     try {
       const form = e.target;
 
-      const firstName = form.firstName.value;
+    const firstName = form.firstName.value;
 
-      const lastName = form.lastName.value;
+    const lastName = form.lastName.value;
 
-      const email = form.email.value;
+    const email = form.email.value;
 
-      const userName = form.userName.value;
+    const userName = form.userName.value;
 
-      const password = form.password.value;
+    const password = form.password.value;
 
-      const confirmPassword = form.confirmPassword.value;
+    
 
-      const formData = new FormData();
-      formData.append("firstName", firstName);
-      formData.append("lastName", lastName);
-      formData.append("email", email);
-      formData.append("userName", userName);
-      formData.append("password", password);
-      formData.append("confirmPassword", confirmPassword);
+    const formData = new FormData();
+    formData.append("firstName", firstName);
+    formData.append("lastName", lastName);
+    formData.append("email", email);
+    formData.append("userName", userName);
+    formData.append("password", password);
+    
 
-      // Get the file input element
-    const profilePictureInput = form.querySelector('input[name="profilePicture"]');
+    // Get the file input element
+    const profilePictureInput = form.querySelector(
+      'input[name="profilePicture"]'
+    );
     // Check if a file is selected
     if (profilePictureInput && profilePictureInput.files.length > 0) {
       const profilePicture = profilePictureInput.files[0];
       formData.append("profilePicture", profilePicture);
     }
 
+    if (!firstName) {
+      toast.error("First Name field can not be Empty");
+      return;
+    }
+    if (!lastName) {
+      toast.error("Last Name field can not be Empty");
+      return;
+    }
+    if (!email) {
+      toast.error("Email field can not be Empty");
+      return;
+    }
+    if (!userName) {
+      toast.error("User Name field can not be Empty");
+      return;
+    }
+    if (!password) {
+      toast.error("Password field can not be Empty");
+      return;
+    }
+    if(!/[A-Z]/.test(password)) {
+      toast.error("Password Must have at least one Uppercase letter");
+      return;
+  }
+  else if(!/[a-z]/.test(password)) {
+      toast.error("Password Must have at least one lowercase letter");
+      return;
+  }
+  else if(password.length < 6) {
+      toast.error("Password must be at least 6 characters long");
+      return;
+  }
+   
+    
       const response = await axios.post(
         "http://localhost:3000/clientAuth/register",
         formData,
@@ -55,6 +97,7 @@ const Register = () => {
           title: "Success",
           text: "User Registered Successfully",
         });
+        window.location.href = "/login";
         form.reset();
       }
     } catch (err: any) {
@@ -67,7 +110,7 @@ const Register = () => {
   };
   return (
     <div>
-      <div className="min-h-screen flex flex-col lg:flex-row justify-center items-stretch bg-gray-100 py-8 px-4 lg:px-0">
+      <div className="min-h-screen flex flex-col md:flex-row justify-center items-stretch overflow-hidden bg-gray-100 py-8 px-4 lg:px-0 ">
         {/* Left Div with Image */}
         <div className="lg:flex justify-center items-center relative w-full lg:w-1/2">
           <img
@@ -98,7 +141,6 @@ const Register = () => {
                   name="firstName"
                   placeholder="Enter your first name"
                   className="w-full border border-gray-300 rounded-md py-3 px-4 placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring focus:ring-purple-500"
-                  required
                 />
               </div>
 
@@ -112,7 +154,6 @@ const Register = () => {
                   name="lastName"
                   placeholder="Enter your last name"
                   className="w-full border border-gray-300 rounded-md py-3 px-4 placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring focus:ring-purple-500"
-                  required
                 />
               </div>
             </div>
@@ -127,7 +168,6 @@ const Register = () => {
                 name="email"
                 placeholder="Enter your email"
                 className="w-full border border-gray-300 rounded-md py-3 px-4 placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring focus:ring-purple-500"
-                required
               />
             </div>
 
@@ -141,7 +181,6 @@ const Register = () => {
                 name="userName"
                 placeholder="Enter your username"
                 className="w-full border border-gray-300 rounded-md py-3 px-4 placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring focus:ring-purple-500"
-                required
               />
             </div>
 
@@ -167,7 +206,6 @@ const Register = () => {
                 name="address"
                 placeholder="Enter your address"
                 className="w-full border border-gray-300 rounded-md py-3 px-4 placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring focus:ring-purple-500"
-                required
               ></textarea>
             </div>
 
@@ -176,45 +214,30 @@ const Register = () => {
               <input type="file" name="profilePicture" />
             </div>
 
-            <div className="flex flex-wrap -mx-4 mb-4">
+            <div className=" w-full  mb-4 ">
               {/* Password */}
-              <div className="w-full lg:w-1/2 px-2 mb-4 lg:mb-0">
-                <label className="block mb-1 font-medium text-gray-800">
+              <div className="mb-4 relative">
+              <label className="block mb-1 font-medium text-gray-800">
                   Password
                 </label>
-                <input
-                  type="password"
+              <input
+                  type={showPassword ? "text": "password"}
                   name="password"
-                  placeholder="Enter your password"
+                  placeholder=" Enter your password"
                   className="w-full border border-gray-300 rounded-md py-3 px-4 placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring focus:ring-purple-500"
-                  required
                 />
-              </div>
+            <span className="absolute top-11 right-2" onClick={()=>setShowPassword(!showPassword)}>
+              {
+                showPassword ? <FaEye className="cursor-pointer"></FaEye>:<FaEyeSlash className="cursor-pointer"></FaEyeSlash>
+              }
+            </span>
+          </div>
 
-              {/* Repeat Password */}
-              <div className="w-full lg:w-1/2 px-2">
-                <label className="block mb-1 font-medium text-gray-800">
-                  Confirm Password
-                </label>
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  placeholder="Confirm your password"
-                  className="w-full border border-gray-300 rounded-md py-3 px-4 placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring focus:ring-purple-500"
-                  required
-                />
-              </div>
+             
             </div>
 
-            {/* Terms and Conditions Checkbox */}
-            <div className="mb-4">
-              <label className="flex items-center">
-                <input type="checkbox" className="mr-2" required />
-                <span className="text-gray-800">
-                  I agree to the Terms and Conditions
-                </span>
-              </label>
-            </div>
+           
+           
 
             {/* Sign Up Button */}
             <button

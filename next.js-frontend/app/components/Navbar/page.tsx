@@ -2,13 +2,13 @@
 
 import axios from "axios";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 
 const NavBar = () => {
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<any | null>(null);
+  const [email, setEmail] = useState<any | null>(null);
 
 
 
@@ -28,7 +28,9 @@ const NavBar = () => {
           });
           // Handle successful response here
           console.log(response.data);
-          setUser(response.data)
+          setUser(response.data);
+          
+          setEmail(response.data.email)
         } catch (error) {
           // Handle error
           console.error("Error fetching client data:", error);
@@ -70,6 +72,11 @@ const NavBar = () => {
       console.log(err);
     }
   };
+
+
+  const  handleGoToProfile = ()=> {
+    window.location.href=`/client/ClientProfile/${email}`
+  }
 
   const navLinks = (
     <>
@@ -129,7 +136,7 @@ const NavBar = () => {
           {/* Avatar  */}
           {
             user && (
-              <div className="avatar mr-5">
+              <div onClick={handleGoToProfile} className="avatar mr-5 cursor-pointer ">
   <div className="w-12 rounded-full">
     <img className="" src={`http://localhost:3000/clients/getImage/${user?.profilePicture}`} />
   </div>
