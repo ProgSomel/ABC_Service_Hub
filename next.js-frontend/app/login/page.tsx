@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
+import toast from 'react-hot-toast';
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -14,6 +15,14 @@ const Login = () => {
 
   const handleLogin = async (e: any) => {
     e.preventDefault();
+    if(!email) {
+      toast.error("Email field can not be Empty")
+      return
+    }
+    if(!password) {
+      toast.error("password  field can not be Empty ")
+      return
+    }
     try {
       const response = await axios.post(
         "http://localhost:3000/clientAuth/clientLogin",
@@ -24,8 +33,7 @@ const Login = () => {
           },
         }
       );
-      console.log(response);
-      console.log(response.data.access_token);
+      
       const token = response.data;
       localStorage.setItem("token", token.access_token);
       localStorage.setItem("email", email);
@@ -45,7 +53,7 @@ const Login = () => {
       Swal.fire({
         icon: "error",
         title: "Oops....",
-        text: err.message,
+        text: err,
       });
     }
   };
@@ -78,7 +86,7 @@ const Login = () => {
               className="w-full border border-gray-300 rounded-md py-3 px-4 placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring focus:ring-purple-500"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required
+              
             />
           </div>
 
@@ -93,7 +101,7 @@ const Login = () => {
               className="w-full border border-gray-300 rounded-md py-3 px-4 placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring focus:ring-purple-500"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              required
+              
             />
           </div>
 
