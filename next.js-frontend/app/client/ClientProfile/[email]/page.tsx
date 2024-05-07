@@ -6,7 +6,7 @@ import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 
 const page = ({ params }: { params: { email: string } }) => {
-  const [client, setClient] = useState(null);
+  const [client, setClient] = useState<any | null>(null);
   const router = useRouter();
   console.log(params.email)
   useEffect(() => {
@@ -31,11 +31,11 @@ const page = ({ params }: { params: { email: string } }) => {
         } else {
           router.push('/login');
         }
-      } catch (error) {
+      } catch (error:any) {
         Swal.fire({
           icon: "error",
           title: "Opss....",
-          text: error?.message,
+          text: error.message,
         });
       }
     }

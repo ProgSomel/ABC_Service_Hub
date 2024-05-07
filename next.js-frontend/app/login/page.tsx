@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -12,7 +12,7 @@ const Login = () => {
   const router = useRouter();
   
 
-  const handleLogin = async (e:any) => {
+  const handleLogin = async (e: any) => {
     e.preventDefault();
     try {
       const response = await axios.post(
@@ -27,17 +27,20 @@ const Login = () => {
       console.log(response);
       console.log(response.data.access_token);
       const token = response.data;
-      localStorage.setItem('token', token.access_token);
-      localStorage.setItem('email', email)
+      localStorage.setItem("token", token.access_token);
+      localStorage.setItem("email", email);
 
-     
-        Swal.fire({
-          icon: "success",
-          title: "Success",
-          text: "User Logged In Successfully",
-        });
-        router.push(`/client/ClientProfile/${email}`)
-    } catch (err:any) {
+      Swal.fire({
+        icon: "success",
+        title: "Success",
+        text: "User Logged In Successfully",
+      });
+      // router.push(`/client/ClientProfile/${email}`)
+      // router.push("/");
+      window.location.href = "/";
+
+      // window.location.reload();
+    } catch (err: any) {
       console.log(err);
       Swal.fire({
         icon: "error",
@@ -51,11 +54,7 @@ const Login = () => {
     <div className="min-h-screen flex flex-col lg:flex-row justify-center items-stretch bg-gray-100 py-8 px-4 lg:px-0">
       {/* Left Div with Image */}
       <div className="lg:flex justify-center items-center relative w-full lg:w-1/2">
-        <img
-          src=""
-          alt="Registration"
-          className="object-cover h-full w-full"
-        />
+        <img src="" alt="Registration" className="object-cover h-full w-full" />
         <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-indigo-600 opacity-75"></div>
       </div>
 
