@@ -3,11 +3,12 @@ import React, { useState, useEffect } from "react";
 import Swal from 'sweetalert2';
 import axios from 'axios'; 
 import Link from "next/link";
+import { MdOutlineDeleteOutline } from "react-icons/md";
 
 
 
 const Dashboard = () => {
-  const [clients, setClients] = useState([]);
+  const [clients, setClients] = useState<any|[]>([]);
   const [searchedClient, setSearchedClient] = useState(null);
 
 
@@ -65,12 +66,13 @@ const Dashboard = () => {
   
         Swal.fire({
           title: "Deleted!",
-          text: "Your file has been deleted.",
+          text: "Client has been deleted.",
           icon: "success"
         });
   
-        const remaining = clients.filter((client) => client?.id !== id);
+        const remaining = clients.filter((client:any) => client?.id !== id);
         setClients(remaining);
+        setSearchedClient(null)
       }
     } catch (err:any) {
       Swal.fire({
@@ -82,10 +84,10 @@ const Dashboard = () => {
   };
 
   return (
-    <div>
+    <div className="min-h-screen max-w-6xl mx-auto px-4 md:px-2 lg:px-2">
       <form
         onSubmit={handleGetClientById}
-        className="max-w-6xl mx-auto my-12 px-4 md:px-2 lg:px-2"
+        className="max-w-6xl mx-auto my-8 px-4 md:px-2 lg:px-2"
       >
         <input
           type="text"
@@ -96,64 +98,129 @@ const Dashboard = () => {
         />
         <div className="flex justify-center mt-5">
           <button
-            className="btn bg-orange-400 text-white font-bold"
+            className="btn bg-orange-400 hover:bg-orange-500 text-white font-bold"
             type="submit"
           >
             Get Client By ID
           </button>
         </div>
       </form>
-      <div className=" grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-5 max-w-6xl mx-auto my-12 px-4 md:px-2 lg:px-2">
-      {searchedClient ? (
-          <div className="card h-[300px]  bg-neutral text-neutral-content">
-          <div className="card-body items-center text-center">
-            <h2 className="card-title">
-              {searchedClient?.firstName} {searchedClient?.lastName}
-            </h2>
-            <p className="font-bold text-2xl">{searchedClient?.email}</p>
-            <div className="card-actions w-full  mt-5">
-              <button
-                onClick={() => handleClientDelete(searchedClient?.id)}
-                className="btn bg-blue-300 btn-primary w-full  text-white"
-              >
-                Delete Client
-              </button>
-            </div>
-          </div>
-        </div>
-        ) : (
-          clients.map((client) => (
-            <div className="card  bg-neutral text-neutral-content">
-            <div className="card-body items-center text-center">
-              <h2 className="card-title">
-                {client?.firstName} {client?.lastName}
-              </h2>
-              <p className="font-bold text-2xl">{client?.email}</p>
-
-              <div className="card-actions w-full  mt-5">
-               <Link href={`/client/ClientProfile/${client?.id}`} className="w-full">
-               <button
-                  
-                  className="btn bg-blue-300 btn-primary w-full  text-white"
-                >
-                  Go to Profile
-                </button>
-               </Link>
-              </div>
-
-              <div className="card-actions w-full  mt-5">
-                <button
-                  onClick={() => handleClientDelete(client?.id)}
-                  className="btn bg-blue-300 btn-primary w-full  text-white"
-                >
-                  Delete Client
-                </button>
+      {
+        searchedClient ? (
+          <div className="overflow-x-auto">
+  <table className="table">
+    {/* head */}
+    <thead className="bg-green-600 text-white font-bold ">
+      <tr>
+        <th></th>
+        <th>Image</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email</th>
+        <th>Update</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+     
+     
+          <tr>
+        <th>
+          
+        </th>
+        <td>
+          <div className="flex items-center gap-3">
+            <div className="avatar">
+              <div className="mask mask-squircle w-12 h-12">
+                <img src={`http://localhost:3000/clients/getImage/${searchedClient?.profilePicture}`} />
               </div>
             </div>
+           
           </div>
-          ))
-        )}
-      </div>
+        </td>
+        <td>
+          {searchedClient?.firstName}
+          <br/>
+         
+        </td>
+        <td>{searchedClient?.lastName}</td>
+        <td>{searchedClient?.email}</td>
+        <th>
+        <button className="btn bg-green-500 hover:bg-green-600  text-white font-bold">Update</button>
+        </th>
+        <th>
+        <button onClick={()=>handleClientDelete(searchedClient?.id)} className="btn  bg-red-400 hover:bg-red-600 text-white font-bold">Delete</button>
+          
+        </th>
+      </tr>
+     
+      
+     
+    </tbody>
+    
+    
+  </table>
+</div>
+        ):
+        (
+          <div className="overflow-x-auto">
+  <table className="table">
+    {/* head */}
+    <thead className="bg-green-600 text-white font-bold ">
+      <tr>
+        <th></th>
+        <th>Image</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email</th>
+        <th>Update</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+     
+      {
+        clients?.map((client:any)=> (
+          <tr key={client?.id}>
+        <th>
+          <label>
+            <input type="checkbox" className="checkbox" />
+          </label>
+        </th>
+        <td>
+          <div className="flex items-center gap-3">
+            <div className="avatar">
+              <div className="mask mask-squircle w-12 h-12">
+                <img src={`http://localhost:3000/clients/getImage/${client?.profilePicture}`} />
+              </div>
+            </div>
+           
+          </div>
+        </td>
+        <td>
+          {client?.firstName}
+          <br/>
+         
+        </td>
+        <td>{client?.lastName}</td>
+        <td>{client?.email}</td>
+        <th>
+          <button className="btn bg-green-500 hover:bg-green-600  text-white font-bold">Update</button>
+        </th>
+        <th>
+          <button onClick={()=>handleClientDelete(client?.id)} className="btn  bg-red-400 hover:bg-red-600 text-white font-bold">Delete</button>
+        </th>
+      </tr>
+        ))
+      }
+     
+    </tbody>
+    
+    
+  </table>
+</div>
+        )
+      }
     </div>
   );
 };

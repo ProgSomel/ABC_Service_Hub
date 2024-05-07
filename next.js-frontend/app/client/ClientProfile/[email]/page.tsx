@@ -70,7 +70,7 @@ const Page = ({ params }: { params: { email: string } }) => {
         text: "Profile updated successfully!",
       });
 
-      // Optionally, you can update the client state with the updated data if needed
+      
       setClient(response.data);
     } catch (error:any) {
       Swal.fire({
