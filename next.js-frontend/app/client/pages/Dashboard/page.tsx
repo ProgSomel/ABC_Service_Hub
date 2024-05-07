@@ -4,12 +4,16 @@ import Swal from 'sweetalert2';
 import axios from 'axios'; 
 import Link from "next/link";
 import { MdOutlineDeleteOutline } from "react-icons/md";
+import toast from "react-hot-toast";
 
 
 
 const Dashboard = () => {
   const [clients, setClients] = useState<any|[]>([]);
   const [searchedClient, setSearchedClient] = useState(null);
+  const [updateSuccess, setUpdateSuccess] = useState(false)
+  const [updateError, setUpdateError] = useState(false)
+
 
 
   useEffect(() => {
@@ -45,6 +49,36 @@ const Dashboard = () => {
         text: `Id ${id} is not found!`,
         
       });
+    }
+  };
+
+  const handleUpdateClientProfile = async (e:any, id) => {
+    e.preventDefault();
+    try {
+      
+
+      const response = await axios.patch(
+        `http://localhost:3000/clients/${id}/updateProfile`,
+        {
+          firstName: e.target.elements.firstName.value,
+          lastName: e.target.elements.lastName.value,
+          email: e.target.elements.email.value,
+          userName: e.target.elements.userName.value,
+          age: e.target.elements.age.value,
+          status: e.target.elements.status.value,
+        }
+        
+        
+      );
+
+      setUpdateSuccess(true)
+
+
+
+      
+      
+    } catch (error:any) {
+      setUpdateError(error?.message)
     }
   };
 
@@ -205,7 +239,127 @@ const Dashboard = () => {
         <td>{client?.lastName}</td>
         <td>{client?.email}</td>
         <th>
-          <button className="btn bg-green-500 hover:bg-green-600  text-white font-bold">Update</button>
+           {/* You can open the modal using document.getElementById('ID').showModal() method */}
+           <button
+                    className="btn"
+                    onClick={() =>
+                      document
+                        .getElementById(`my_modal_${client?._id}`)
+                        .showModal()
+                    }
+                  >
+                    Update
+                  </button>
+                  <dialog id={`my_modal_${client._id}`} className="modal">
+                    <div className="modal-box">
+                      <form method="dialog">
+                        {/* if there is a button in form, it will close the modal */}
+                        <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                          ✕
+                        </button>
+                      </form>
+                      <div>
+                      <form onSubmit={(e)=>handleUpdateClientProfile(e,client?.id)}>
+          <div className="flex justify-center mb-6">
+           
+            <img
+              src={`http://localhost:3000/clients/getImage/${client?.profilePicture}`}
+              className="w-32 h-32 rounded-full"
+            />
+          </div>
+          <div>
+          
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">
+              First Name
+            </label>
+            <input
+              type="text"
+              name="firstName"
+              defaultValue={client?.firstName}
+              className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-indigo-50 p-2"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">
+              Last Name
+            </label>
+            <input
+              type="text"
+              name="lastName"
+              defaultValue={client?.lastName}
+              className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-indigo-50 p-2"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">
+              Email
+            </label>
+            <input
+              type="email"
+              name="email"
+              defaultValue={client?.email}
+              className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-purple-50 p-2"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">
+              Username
+            </label>
+            <input
+              type="text"
+              name="userName"
+              defaultValue={client?.userName}
+              className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-green-50 p-2"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">
+              Age
+            </label>
+            <input
+              type="number"
+              name="age"
+              defaultValue={client?.age}
+              className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-yellow-50 p-2"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">
+              Status
+            </label>
+            <input
+              type="text"
+              name="status"
+              defaultValue={client?.status}
+              className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-yellow-50 p-2"
+            />
+          </div>
+
+          <div className="flex justify-center my-5">
+          {
+              updateSuccess ? <p>
+                Successfully Updated
+              </p>:
+              <p>
+                {updateError}
+              </p>
+            }
+          </div>
+
+          <div>
+            <button 
+              type="submit"
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+            >
+              Update Profile
+            </button>
+          </div>
+        </form>
+                      </div>
+                    </div>
+                  </dialog>
         </th>
         <th>
           <button onClick={()=>handleClientDelete(client?.id)} className="btn  bg-red-400 hover:bg-red-600 text-white font-bold">Delete</button>
