@@ -217,9 +217,7 @@ const Dashboard = () => {
         clients?.map((client:any)=> (
           <tr key={client?.id}>
         <th>
-          <label>
-            <input type="checkbox" className="checkbox" />
-          </label>
+         
         </th>
         <td>
           <div className="flex items-center gap-3">
@@ -241,7 +239,7 @@ const Dashboard = () => {
         <th>
            {/* You can open the modal using document.getElementById('ID').showModal() method */}
            <button
-                    className="btn"
+                    className="btn bg-green-500 hover:bg-green-600 text-white"
                     onClick={() =>
                       document
                         .getElementById(`my_modal_${client?._id}`)
