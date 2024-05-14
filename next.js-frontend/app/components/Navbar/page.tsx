@@ -6,6 +6,7 @@ import Swal from "sweetalert2";
 
 const NavBar = () => {
   const [token, setToken] = useState<string | null>(null);
+  const [cart, setCart] = useState<string | null>(null);
   const [user, setUser] = useState<any | null>(null);
   const [email, setEmail] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true); // Add isLoading state
@@ -13,6 +14,9 @@ const NavBar = () => {
   useEffect(() => {
     const tokenFromLocalStorage = localStorage.getItem("token");
     setToken(tokenFromLocalStorage);
+    const cartFromLocalStorage = localStorage.getItem("cart");
+    setCart(cartFromLocalStorage);
+
 
     if (tokenFromLocalStorage) {
       // Check if token exists
