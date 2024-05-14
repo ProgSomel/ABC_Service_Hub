@@ -5,7 +5,7 @@ import { Slide } from "react-awesome-reveal";
 
 const Banner = () => {
   return (
-    <div className="relative min-h-screen bg-cover bg-center h-96" style={{backgroundImage: `url(${bannerImg.src})`}}>
+    <div className="relative h-[550px] bg-cover bg-center " style={{backgroundImage: `url(${bannerImg.src})`}}>
       {/* Content */}
       <div className="absolute inset-0 bg-black opacity-40"></div>
       <div className="absolute inset-0 flex items-center justify-center">

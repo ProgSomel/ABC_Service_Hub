@@ -2,10 +2,18 @@
 import axios from "axios";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Fade, Slide } from "react-awesome-reveal";
+import {  Slide } from "react-awesome-reveal";
+import {
+  getStoredItem,
+ 
+  saveItemsToStorage,
+} from "../utils/localStorage";
+import Swal from "sweetalert2";
 
 const Services = () => {
   const [services, setServices] = useState([]);
+  const [cart, setCart] = useState([]);
+
   const [viewAll, setViewAll] = useState(false);
 
   useEffect(() => {
@@ -21,6 +29,32 @@ const Services = () => {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const dataFromStorage = getStoredItem("cart");
+    if (dataFromStorage) {
+      setCart(dataFromStorage);
+    }
+  }, []);
+
+  //! Handle Add To Cart
+  const handleAddToCart = (service: any, id: any) => {
+    console.log(cart);
+    const exsitInCart = cart?.find((serviceId) => serviceId === id);
+    if (!exsitInCart) {
+      saveItemsToStorage("cart", id);
+      setCart([...cart, id]);
+
+      Swal.fire("Successfully Added to cart");
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: `Already added to cart`,
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen max-w-6xl mx-auto px-4 md:px-2 lg:px-2 my-12">
       <div className=" mb-8 ">
@@ -46,11 +80,10 @@ const Services = () => {
       <div className="grid hover:cursor-pointer  grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {viewAll
           ? services?.map((service: any) => (
-             <Link href="/services/pages/serviceDetails">
-               <div
+              <div
                 data-aos="fade-up"
                 data-aos-duration="3000"
-                className="card hover:border-2 hover:border-orange-400  hover:scale-110 card-compact  bg-base-100 shadow-xl"
+                className="card h-[300px] hover:border-2 hover:border-orange-400  hover:scale-110 card-compact  bg-base-100 shadow-xl"
               >
                 <figure>
                   <img
@@ -73,20 +106,23 @@ const Services = () => {
                         ${service?.price}
                       </p>
                     </div>
-                    <button className="btn btn-outline border-orange-400 hover:bg-orange-500 hover:border-none hover:scale-110">
+                    <button
+                      onClick={() =>
+                        handleAddToCart(service, service?.serviceId)
+                      }
+                      className="btn btn-outline border-orange-400 hover:bg-orange-500 hover:border-none hover:scale-110"
+                    >
                       Add to Cart
                     </button>
                   </div>
                 </div>
               </div>
-             </Link>
             ))
           : services?.slice(0, 8).map((service: any) => (
-             <Link href="/services/pages/serviceDetails">
-               <div
+              <div
                 data-aos="fade-up"
                 data-aos-duration="3000"
-                className="card hover:border-2 hover:border-orange-400 hover:cursor-pointer  hover:scale-110 card-compact  bg-base-100 shadow-xl"
+                className="card h-[300px] hover:border-2 hover:border-orange-400 hover:cursor-pointer  hover:scale-110 card-compact  bg-base-100 shadow-xl"
               >
                 <figure>
                   <img
@@ -108,13 +144,17 @@ const Services = () => {
                         ${service?.price}
                       </p>
                     </div>
-                    <button className="btn btn-outline border-orange-400 hover:bg-orange-500 hover:border-none hover:scale-110">
+                    <button
+                      onClick={() =>
+                        handleAddToCart(service, service?.serviceId)
+                      }
+                      className="btn btn-outline border-orange-400 hover:bg-orange-500 hover:border-none hover:scale-110"
+                    >
                       Add to Cart
                     </button>
                   </div>
                 </div>
               </div>
-             </Link>
             ))}
       </div>
 
