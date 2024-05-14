@@ -46,6 +46,7 @@ const Page = () => {
         removeFromStorage(cart, id);
         const remainning = cartItems?.filter((item:any) => item.serviceId !== id);
         setCartItems(remainning);
+        // window.location.reload();
       }
 
   

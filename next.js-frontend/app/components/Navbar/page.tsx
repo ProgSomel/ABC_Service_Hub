@@ -3,20 +3,37 @@ import axios from "axios";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import { FaShoppingCart } from "react-icons/fa";
+import { getStoredItem, removeFromStorage } from "@/app/utils/localStorage";
+import { MdDelete } from "react-icons/md";
 
 const NavBar = () => {
   const [token, setToken] = useState<string | null>(null);
-  const [cart, setCart] = useState<string | null>(null);
+  const [cart, setCart] = useState(0);
   const [user, setUser] = useState<any | null>(null);
   const [email, setEmail] = useState<any | null>(null);
-  const [isLoading, setIsLoading] = useState(true); // Add isLoading state
+  const [isLoading, setIsLoading] = useState(true);
+  const [services, setServices] = useState([]);
+  const [cartItems, setCartItems] = useState<any[]>([]);
+  const serviceCartIds = getStoredItem("cart");
 
   useEffect(() => {
     const tokenFromLocalStorage = localStorage.getItem("token");
     setToken(tokenFromLocalStorage);
-    const cartFromLocalStorage = localStorage.getItem("cart");
-    setCart(cartFromLocalStorage);
+    const cartFromLocalStorage = getStoredItem("cart");
+    setCart(cartFromLocalStorage.length);
 
+    const fetchCartData = async () => {
+      const response = await axios.get("http://localhost:3000/services");
+      setServices(response.data);
+      setCartItems(
+        response.data
+          ?.filter((service: any) =>
+            serviceCartIds.includes(service?.serviceId)
+          )
+          ?.map((item: any) => ({ ...item, quantity: 1 }))
+      );
+    };
 
     if (tokenFromLocalStorage) {
       // Check if token exists
@@ -50,7 +67,8 @@ const NavBar = () => {
       console.log("User is not logged in");
       setIsLoading(false); // Set isLoading to false if user is not logged in
     }
-  }, []);
+    fetchCartData();
+  }, [cart, cartItems]);
 
   const handleLogOut = async () => {
     try {
@@ -84,6 +102,12 @@ const NavBar = () => {
     window.location.href = `/client/ClientProfile/${email}`;
   };
 
+  const handleClearItem = (cart: any, id: any) => {
+    removeFromStorage(cart, id);
+    const remainning = cartItems?.filter((item: any) => item.serviceId !== id);
+    setCartItems(remainning);
+  };
+
   const navLinks = (
     <>
       <li>
@@ -91,6 +115,7 @@ const NavBar = () => {
           Home
         </Link>
       </li>
+
       <li>
         <Link className="font-bold" href="/about">
           About
@@ -145,7 +170,84 @@ const NavBar = () => {
           <div className="navbar-center hidden lg:flex">
             <ul className="menu menu-horizontal px-1">{navLinks}</ul>
           </div>
+
           <div className="navbar-end">
+            {/* You can open the modal using document.getElementById('ID').showModal() method */}
+            <button
+              className=""
+              onClick={() => document.getElementById("my_modal_3").showModal()}
+            >
+              {/* Cart  */}
+              <div className="indicator mr-8">
+                <span className="indicator-item badge  bg-yellow-200 w-1">
+                  {cart}
+                </span>
+                <button className="w-8">
+                  <FaShoppingCart />
+                </button>
+              </div>
+            </button>
+            <dialog id="my_modal_3" className="modal">
+              <div className="modal-box">
+                <form method="dialog">
+                  {/* if there is a button in form, it will close the modal */}
+                  <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                    ✕
+                  </button>
+                </form>
+
+                <div>
+                  {cartItems?.map((item) => (
+                    <div className="hero  ">
+                      <div className="my-2">
+                        <div className="hero-content flex-col lg:flex-row">
+                          <img
+                            src={`http://localhost:3000/clients/getImage/${item?.serviceImg}`}
+                            className="w-1/2"
+                          />
+                          <div>
+                            <h1 className="text-xl font-bold">
+                              {item?.service_name}
+                            </h1>
+                            <p>
+                              <span className="py-4 text-yellow-500">
+                                ${item?.price}
+                              </span>
+                              <span className="ml-3 font-light">
+                                Quantity: {item?.quantity}
+                              </span>
+                            </p>
+
+                            <p className="flex gap-4 items-center">
+                              {item?.quantity}X{item?.price}
+                              <span
+                                onClick={() =>
+                                  handleClearItem("cart", item?.serviceId)
+                                }
+                                className="hover:scale-125 hover:cursor-pointer"
+                              >
+                                <MdDelete />
+                              </span>
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  <div className="flex justify-center gap-5">
+                    <Link href="/cart">
+                      <button className="bg-yellow-500 text-white font-bold px-3 rounded-md">
+                        View Cart
+                      </button>
+                    </Link>
+                    <button className="bg-black text-white font-bold px-3 rounded-md">
+                      Checkout
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </dialog>
+
             {/* Avatar  */}
             {token && user && (
               <div
