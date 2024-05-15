@@ -45,7 +45,11 @@ const Services = () => {
       saveItemsToStorage("cart", id);
       setCart([...cart, id]);
 
-      Swal.fire("Successfully Added to cart");
+      Swal.fire({
+        title: "Good job!",
+        text: " Added to the Cart",
+        icon: "success",
+      });
     } else {
       Swal.fire({
         icon: "error",

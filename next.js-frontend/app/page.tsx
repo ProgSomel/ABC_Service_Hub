@@ -90,7 +90,7 @@ export default function Home() {
         <div
           className="relative bg-cover bg-center bg-no-repeat w-full "
           style={{
-            backgroundImage: `url("https://i.postimg.cc/bJcDYwYz/review.jpg")`,
+            backgroundImage: `url("https://i.postimg.cc/7YfjtqBW/pexels-kamenczak-775219.jpg")`,
             backgroundSize: "cover",
           }}
         >

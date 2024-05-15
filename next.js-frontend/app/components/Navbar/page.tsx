@@ -102,6 +102,11 @@ const NavBar = () => {
     window.location.href = `/client/ClientProfile/${email}`;
   };
 
+  const handleGoToMyOrder = () => {
+    window.location.href = `/client/clientOrder/${user?.id}`;
+
+  }
+
   const handleClearItem = (cart: any, id: any) => {
     removeFromStorage(cart, id);
     const remainning = cartItems?.filter((item: any) => item.serviceId !== id);
@@ -119,6 +124,11 @@ const NavBar = () => {
       <li>
         <Link className="font-bold" href="/about">
           About
+        </Link>
+      </li>
+      <li>
+        <Link className="font-bold" href="/Pages/contactUs">
+          Contact Us
         </Link>
       </li>
     </>
@@ -240,9 +250,11 @@ const NavBar = () => {
                         View Cart
                       </button>
                     </Link>
-                    <button className="bg-black text-white font-bold px-3 rounded-md">
-                      Checkout
-                    </button>
+                    {cartItems.length > 0 && (
+                      <button className="bg-black text-white font-bold px-3 rounded-md">
+                        Checkout
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -250,17 +262,26 @@ const NavBar = () => {
 
             {/* Avatar  */}
             {token && user && (
-              <div
-                onClick={handleGoToProfile}
-                className="avatar mr-5 cursor-pointer "
-              >
-                <div className="w-12 rounded-full">
-                  <img
-                    className=""
-                    src={`http://localhost:3000/clients/getImage/${user?.profilePicture}`}
-                  />
-                </div>
-              </div>
+              <details className="dropdown">
+                <summary className="m-1 btn bg-white border-none hover:border-none hover:bg-white">
+                  
+                  <div className="avatar">
+                    <div className="w-12 rounded-full">
+                      <img className="" src={
+                        `http://localhost:3000/clients/getImage/${user?.profilePicture}`
+                      } />
+                    </div>
+                  </div>
+                </summary>
+                <ul className="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52">
+                  <li>
+                    <button className="hover:scale-100"  onClick={handleGoToProfile}>View Profile</button>
+                  </li>
+                  <li>
+                  <button className="hover:scale-100"  onClick={handleGoToMyOrder}>My Orders</button>
+                  </li>
+                </ul>
+              </details>
             )}
 
             {token && user ? (
